@@ -14,6 +14,14 @@ const MONGODB_URI = 'mongodb+srv://oryxstoreofficial_db_user:nVOd5QZqnowvmmCY@cl
 // ============================================
 // SCHEMAS
 // ============================================
+// Prometheus metrics endpoint
+const collectDefaultMetrics = promClient.collectDefaultMetrics;
+collectDefaultMetrics({ timeout: 5000 });
+
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', promClient.register.contentType);
+    res.end(await promClient.register.metrics());
+});
 
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -206,13 +214,6 @@ app.use((req, res, next) => {
     next();
 });
 // Prometheus metrics endpoint
-const collectDefaultMetrics = promClient.collectDefaultMetrics;
-collectDefaultMetrics({ timeout: 5000 });
-
-app.get('/metrics', async (req, res) => {
-    res.set('Content-Type', promClient.register.contentType);
-    res.end(await promClient.register.metrics());
-});
 
     app.get('/', (req, res) => {
         res.json({ 

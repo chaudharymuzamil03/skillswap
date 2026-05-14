@@ -3,7 +3,7 @@ const API_BASE_URL = 'http://35.172.194.189:5000/api';
 export const authAPI = {
     register: async (userData) => {
         try {
-            const response = await fetch(`${API_BASE}/register`, {
+            const response = await fetch(`${API_BASE_URL}/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -18,7 +18,7 @@ export const authAPI = {
 
     login: async (userData) => {
         try {
-            const response = await fetch(`${API_BASE}/login`, {
+            const response = await fetch(`${API_BASE_URL}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-﻿name: SkillSwap CI/CD Pipeline
+name: SkillSwap CI/CD Pipeline
 
 on:
   push:
@@ -33,14 +33,14 @@ jobs:
       - name: Build and push Backend
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
+          context: ./skillswap/backend
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/skillswap-backend:latest
       
       - name: Build and push Frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
+          context: ./skillswap/frontend
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/skillswap-frontend:latest
 

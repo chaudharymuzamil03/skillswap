@@ -9,7 +9,9 @@ app.use(cors());
 app.use(express.json());
 
 const MONGODB_URI = 'mongodb+srv://oryxstoreofficial_db_user:nVOd5QZqnowvmmCY@cluster0.uez7fco.mongodb.net/skillswap?retryWrites=true&w=majority&appName=Cluster0';
-
+const promClient = require('prom-client');
+const collectDefaultMetrics = promClient.collectDefaultMetrics;
+collectDefaultMetrics({ timeout: 5000 });
 // ============================================
 // SCHEMAS
 // ============================================
@@ -194,6 +196,25 @@ function startServer() {
     // ============================================
     // BASIC ROUTES
     // ============================================
+
+    // Metrics middleware
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+        const duration = Date.now() - start;
+        console.log(`${req.method} ${req.path} - ${res.statusCode} - ${duration}ms`);
+    });
+    next();
+});
+// Prometheus metrics endpoint
+const promClient = require('prom-client');
+const collectDefaultMetrics = promClient.collectDefaultMetrics;
+collectDefaultMetrics({ timeout: 5000 });
+
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', promClient.register.contentType);
+    res.end(await promClient.register.metrics());
+});
 
     app.get('/', (req, res) => {
         res.json({ 

@@ -1,0 +1,22 @@
+#!/bin/bash
+# devops/ansible/templates/backup.sh.j2
+
+BACKUP_DIR=/backups/{{ app_name }}
+DATE=$(date +%Y%m%d_%H%M%S)
+RETENTION_DAYS=7
+
+mkdir -p $BACKUP_DIR
+
+# Backup MongoDB
+docker exec skillswap-mongodb mongodump --out /tmp/backup_$DATE
+docker cp skillswap-mongodb:/tmp/backup_$DATE $BACKUP_DIR/
+docker exec skillswap-mongodb rm -rf /tmp/backup_$DATE
+
+# Compress backup
+tar -czf $BACKUP_DIR/backup_$DATE.tar.gz -C $BACKUP_DIR backup_$DATE
+rm -rf $BACKUP_DIR/backup_$DATE
+
+# Remove old backups
+find $BACKUP_DIR -name "backup_*.tar.gz" -mtime +$RETENTION_DAYS -delete
+
+echo "[$(date)] Backup completed: backup_$DATE.tar.gz" >> /var/log/backup.log

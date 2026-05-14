@@ -1,0 +1,14 @@
+# devops/ansible/templates/logrotate.conf.j2
+/var/log/{{ app_name }}/*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 ubuntu ubuntu
+    sharedscripts
+    postrotate
+        docker-compose -f /opt/{{ app_name }}/devops/docker/docker-compose.yml restart > /dev/null 2>&1
+    endscript
+}

@@ -1,0 +1,136 @@
+# devops/ansible/playbook.yml
+---
+- name: Deploy SkillSwap Application
+  hosts: skillswap-server
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required system packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - git
+          - wget
+          - htop
+          - net-tools
+        state: present
+
+    - name: Install Docker
+      include_role:
+        name: docker
+
+    - name: Install Docker Compose
+      include_role:
+        name: docker-compose
+
+    - name: Copy application files
+      synchronize:
+        src: "../../"
+        dest: "/opt/{{ app_name }}/"
+        rsync_opts:
+          - "--exclude=node_modules"
+          - "--exclude=.git"
+          - "--exclude=frontend/node_modules"
+          - "--exclude=backend/node_modules"
+      delegate_to: localhost
+
+    - name: Create .env file
+      template:
+        src: templates/env.j2
+        dest: "/opt/{{ app_name }}/.env"
+        mode: '0600'
+
+    - name: Start Docker Compose services
+      docker_compose:
+        project_src: "/opt/{{ app_name }}/devops/docker"
+        state: present
+        restarted: yes
+      register: compose_output
+
+    - name: Wait for backend to be healthy
+      uri:
+        url: "http://localhost:{{ app_port }}/api/health"
+        method: GET
+        status_code: 200
+      register: health_check
+      until: health_check.status == 200
+      retries: 30
+      delay: 5
+
+    - name: Install Prometheus
+      include_role:
+        name: prometheus
+      when: monitoring_enabled | default(true)
+
+    - name: Install Grafana
+      include_role:
+        name: grafana
+      when: monitoring_enabled | default(true)
+
+    - name: Configure Nginx reverse proxy
+      template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/sites-available/{{ app_name }}
+      notify: restart nginx
+
+    - name: Enable Nginx site
+      file:
+        src: "/etc/nginx/sites-available/{{ app_name }}"
+        dest: "/etc/nginx/sites-enabled/{{ app_name }}"
+        state: link
+      notify: restart nginx
+
+    - name: Create log rotation
+      template:
+        src: templates/logrotate.conf.j2
+        dest: "/etc/logrotate.d/{{ app_name }}"
+
+    - name: Create backup script
+      template:
+        src: templates/backup.sh.j2
+        dest: "/usr/local/bin/backup-{{ app_name }}.sh"
+        mode: '0755'
+
+    - name: Add backup cron job
+      cron:
+        name: "Backup {{ app_name }} database"
+        minute: "0"
+        hour: "2"
+        job: "/usr/local/bin/backup-{{ app_name }}.sh >> /var/log/backup.log 2>&1"
+
+    - name: Setup monitoring cron jobs
+      cron:
+        name: "Health check for {{ app_name }}"
+        minute: "*/5"
+        job: "curl -f http://localhost:{{ app_port }}/api/health || echo 'Down' >> /var/log/health.log"
+
+    - name: Display deployment info
+      debug:
+        msg:
+          - "✅ Deployment completed successfully!"
+          - "🌐 Frontend: http://{{ ansible_host }}:3000"
+          - "🔧 Backend API: http://{{ ansible_host }}:5000"
+          - "📊 Grafana: http://{{ ansible_host }}:3001"
+          - "📈 Prometheus: http://{{ ansible_host }}:9090"
+          - "🔧 Jenkins: http://{{ ansible_host }}:8080"
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+    - name: restart docker
+      service:
+        name: docker
+        state: restarted

@@ -1,0 +1,11 @@
+# devops/kubernetes/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skillswap-config
+  namespace: skillswap
+data:
+  NODE_ENV: "production"
+  PORT: "5000"
+  BACKEND_URL: "http://skillswap-backend:5000"
+  FRONTEND_URL: "http://skillswap-frontend:80"

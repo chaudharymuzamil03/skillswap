@@ -1,0 +1,51 @@
+# devops/kubernetes/backend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skillswap-backend
+  namespace: skillswap
+  labels:
+    app: skillswap
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: skillswap-backend
+  template:
+    metadata:
+      labels:
+        app: skillswap-backend
+        tier: backend
+    spec:
+      containers:
+      - name: backend
+        image: ${DOCKER_REGISTRY}/skillswap-backend:${IMAGE_TAG}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        envFrom:
+        - configMapRef:
+            name: skillswap-config
+        - secretRef:
+            name: skillswap-secret
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always

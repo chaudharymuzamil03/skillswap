@@ -1,0 +1,8 @@
+# devops/kubernetes/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: skillswap
+  labels:
+    name: skillswap
+    environment: production

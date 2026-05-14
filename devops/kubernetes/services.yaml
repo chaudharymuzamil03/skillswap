@@ -1,0 +1,47 @@
+# devops/kubernetes/services.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: skillswap-backend
+  namespace: skillswap
+  labels:
+    app: skillswap
+    tier: backend
+spec:
+  selector:
+    app: skillswap-backend
+  ports:
+  - port: 5000
+    targetPort: 5000
+    protocol: TCP
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: skillswap-frontend
+  namespace: skillswap
+  labels:
+    app: skillswap
+    tier: frontend
+spec:
+  selector:
+    app: skillswap-frontend
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: skillswap
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
+  type: ClusterIP

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Records Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filters select, .filters button {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .records-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .record-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .record-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .record-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .record-id {
+            font-size: 0.8rem;
+            color: #777;
+            background: #f5f5f5;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            width: 140px;
+            color: #555;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: #333;
+        }
+
+        .skills-section {
+            margin-top: 15px;
+        }
+
+        .skills-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .skill-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .empty-skill {
+            color: #999;
+            font-style: italic;
+        }
+
+        .credit-score {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .credit-value, .reputation-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .credit-value {
+            color: #4CAF50;
+        }
+
+        .reputation-value {
+            color: #FF9800;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            padding: 40px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>User Records Database</h1>
+            <p>View and manage user records</p>
+        </div>
+
+        <div id="errorMessage" class="error" style="display: none;"></div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search by name, email, or skills...">
+            </div>
+            <div class="filters">
+                <select id="sortSelect">
+                    <option value="name">Sort by Name</option>
+                    <option value="credit">Sort by Credit</option>
+                    <option value="reputation">Sort by Reputation</option>
+                </select>
+                <button id="refreshData">Refresh Data</button>
+            </div>
+        </div>
+
+        <div id="loadingMessage" class="loading">Loading user data...</div>
+
+        <div class="records-container" id="recordsContainer"></div>
+    </div>
+
+    <script>
+        let allUsers = [];
+
+        function formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                return date.toLocaleDateString(undefined, options);
+            } catch (error) {
+                return 'Invalid Date';
+            }
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingMessage').style.display = show ? 'block' : 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        async function getUsersFromBackend() {
+            try {
+                const response = await fetch('http://localhost:5000/api/users');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch users');
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    return data.users;
+                } else {
+                    throw new Error(data.message || 'Failed to load users');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching users:', error);
+                showError('Cannot connect to server: ' + error.message);
+                return [];
+            }
+        }
+
+        async function fetchUsers() {
+            showLoading(true);
+            try {
+                allUsers = await getUsersFromBackend();
+                renderUsers(allUsers);
+            } catch (error) {
+                showError('Failed to load user data: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function renderUsers(users) {
+            const container = document.getElementById('recordsContainer');
+            
+            if (users.length === 0) {
+                container.innerHTML = '<div class="loading">No users found</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            users.forEach(user => {
+                const userElement = document.createElement('div');
+                userElement.className = 'record-card';
+                
+                userElement.innerHTML = `
+                    <div class="record-header">
+                        <div class="record-name">${user.name || 'Unknown'}</div>
+                        <div class="record-id">ID: ${user._id ? user._id.substring(0, 8) + '...' : 'N/A'}</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">Email:</div>
+                        <div class="detail-value">${user.email || 'N/A'}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Member Since:</div>
+                        <div class="detail-value">${formatDate(user.createdAt)}</div>
+                    </div>
+                    
+                    <div class="skills-section">
+                        <div class="skills-title">Teaching Skills:</div>
+                        <div class="skills-list">
+                            ${user.teachSkills && user.teachSkills.length > 0 
+                                ? user.teachSkills.map(skill => `<span class="skill-tag">${skill}</span>`).join('') 
+                                : '<span class="empty-skill">No skills listed</span>'}
+                        </div>
+                    </div>
+                    
+                    <div class="skills-section">
+                        <div class="skills-title">Learning Interests:</div>
+                        <div class="skills-list">
+                            ${user.learnSkills && user.learnSkills.length > 0 
+                                ? user.learnSkills.map(skill => `<span class="skill-tag">${skill}</span>`).join('') 
+                                : '<span class="empty-skill">No interests listed</span>'}
+                        </div>
+                    </div>
+                    
+                    <div class="credit-score">
+                        <div class="credit">
+                            <div class="credit-value">${user.willCredit || 0}</div>
+                            <div class="credit-label">Credit Score</div>
+                        </div>
+                        <div class="reputation">
+                            <div class="reputation-value">${user.reputationScore || 0}</div>
+                            <div class="reputation-label">Reputation</div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(userElement);
+            });
+        }
+
+        function handleSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredUsers = allUsers.filter(user => 
+                (user.name && user.name.toLowerCase().includes(searchTerm)) ||
+                (user.email && user.email.toLowerCase().includes(searchTerm)) ||
+                (user.teachSkills && user.teachSkills.some(skill => skill.toLowerCase().includes(searchTerm))) ||
+                (user.learnSkills && user.learnSkills.some(skill => skill.toLowerCase().includes(searchTerm)))
+            );
+            renderUsers(filteredUsers);
+        }
+
+        function handleSort() {
+            const sortBy = document.getElementById('sortSelect').value;
+            const sortedUsers = [...allUsers];
+            
+            switch(sortBy) {
+                case 'name':
+                    sortedUsers.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                    break;
+                case 'credit':
+                    sortedUsers.sort((a, b) => (b.willCredit || 0) - (a.willCredit || 0));
+                    break;
+                case 'reputation':
+                    sortedUsers.sort((a, b) => (b.reputationScore || 0) - (a.reputationScore || 0));
+                    break;
+            }
+            
+            renderUsers(sortedUsers);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', handleSearch);
+        document.getElementById('sortSelect').addEventListener('change', handleSort);
+        document.getElementById('refreshData').addEventListener('click', fetchUsers);
+
+        document.addEventListener('DOMContentLoaded', fetchUsers);
+    </script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import promClient from 'prom-client';
 
 const app = express();
 const PORT = 5000;
@@ -9,9 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 const MONGODB_URI = 'mongodb+srv://oryxstoreofficial_db_user:nVOd5QZqnowvmmCY@cluster0.uez7fco.mongodb.net/skillswap?retryWrites=true&w=majority&appName=Cluster0';
-const promClient = require('prom-client');
-const collectDefaultMetrics = promClient.collectDefaultMetrics;
-collectDefaultMetrics({ timeout: 5000 });
+
 // ============================================
 // SCHEMAS
 // ============================================
@@ -207,7 +206,6 @@ app.use((req, res, next) => {
     next();
 });
 // Prometheus metrics endpoint
-const promClient = require('prom-client');
 const collectDefaultMetrics = promClient.collectDefaultMetrics;
 collectDefaultMetrics({ timeout: 5000 });
 

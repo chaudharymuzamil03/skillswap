@@ -24,7 +24,7 @@ const AdminUsersList = ({ currentUser }) => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/admin/users');
+            const response = await fetch('http://35.172.194.189:5000/api/admin/users');
             const data = await response.json();
             if (data.success) {
                 setUsers(data.users);
@@ -58,7 +58,7 @@ const AdminUsersList = ({ currentUser }) => {
 
     const handleUpdateUser = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/users/${selectedUser._id}`, {
+            const response = await fetch(`http://35.172.194.189:5000/api/admin/users/${selectedUser._id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(editForm)
@@ -79,7 +79,7 @@ const AdminUsersList = ({ currentUser }) => {
 
     const handleUpdateSkills = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/users/${selectedUser._id}/skills`, {
+            const response = await fetch(`http://35.172.194.189:5000/api/admin/users/${selectedUser._id}/skills`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(skillsForm)
@@ -100,7 +100,7 @@ const AdminUsersList = ({ currentUser }) => {
 
     const handleDeleteUser = async (userId) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+            const response = await fetch(`http://35.172.194.189:5000/api/admin/users/${userId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ currentUserId: currentUser.id })
@@ -127,7 +127,7 @@ const AdminUsersList = ({ currentUser }) => {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/users/${userId}/password`, {
+            const response = await fetch(`http://35.172.194.189:5000/api/admin/users/${userId}/password`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ newPassword })

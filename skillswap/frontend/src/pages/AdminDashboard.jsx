@@ -47,7 +47,7 @@ const AdminDashboard = ({ user, onLogout }) => {
 
     const fetchAdminStats = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/admin/stats');
+            const response = await fetch('http://35.172.194.189:5000/api/admin/stats');
             const data = await response.json();
             if (data.success) {
                 setStats(data.stats);

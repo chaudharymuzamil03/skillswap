@@ -25,7 +25,7 @@ const AdminTransactions = () => {
 
     const fetchAllTransactions = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/admin/transactions/all');
+            const response = await fetch('http://35.172.194.189:5000/api/admin/transactions/all');
             const data = await response.json();
             if (data.success) {
                 setTransactions(data.transactions);

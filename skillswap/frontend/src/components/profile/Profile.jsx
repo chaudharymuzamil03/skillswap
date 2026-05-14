@@ -18,7 +18,7 @@ const Profile = ({ user, onUpdate }) => {
     const fetchUserSkills = async () => {
         try {
             console.log('🔄 Fetching user skills from MongoDB...');
-            const response = await fetch(`http://localhost:5000/api/users/${user.id}`);
+            const response = await fetch(`http://35.172.194.189:5000/api/users/${user.id}`);
             const data = await response.json();
             
             if (data.success && data.user) {
@@ -123,7 +123,7 @@ const Profile = ({ user, onUpdate }) => {
                 learn: learnSkills
             });
             
-            const response = await fetch(`http://localhost:5000/api/users/${user.id}/skills`, {
+            const response = await fetch(`http://35.172.194.189:5000/api/users/${user.id}/skills`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

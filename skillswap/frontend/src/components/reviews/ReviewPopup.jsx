@@ -41,7 +41,7 @@ const ReviewPopup = ({
 
             try {
                 const response = await fetch(
-                    `http://localhost:5000/api/users/${currentUser.id}/can-review/${targetUser.id}?sessionId=${sessionId}`
+                    `http://35.172.194.189:5000/api/users/${currentUser.id}/can-review/${targetUser.id}?sessionId=${sessionId}`
                 );
                 const data = await response.json();
                 
@@ -81,7 +81,7 @@ const ReviewPopup = ({
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/reviews', {
+            const response = await fetch('http://35.172.194.189:5000/api/reviews', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

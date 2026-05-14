@@ -19,7 +19,7 @@ const AdminSkillsManagement = () => {
 
     const fetchAllSkills = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/admin/skills/all');
+            const response = await fetch('http://35.172.194.189:5000/api/admin/skills/all');
             const data = await response.json();
             if (data.success) {
                 setAllSkills(data.skills);
@@ -39,7 +39,7 @@ const AdminSkillsManagement = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/admin/skills/remove', {
+            const response = await fetch('http://35.172.194.189:5000/api/admin/skills/remove', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ skill: skillName })

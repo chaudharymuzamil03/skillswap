@@ -17,7 +17,7 @@ const AdminPanel = ({ currentUser }) => {
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            const response = await fetch('http://localhost:5000/api/admin/users');
+            const response = await fetch('http://35.172.194.189:5000/api/admin/users');
             const data = await response.json();
             
             if (data.success) {
@@ -69,7 +69,7 @@ const AdminPanel = ({ currentUser }) => {
         }
 
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/users/${selectedUser._id}/password`, {
+            const response = await fetch(`http://35.172.194.189:5000/api/admin/users/${selectedUser._id}/password`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

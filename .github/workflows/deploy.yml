@@ -1,0 +1,65 @@
+﻿name: SkillSwap CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Trivy security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: security-scan
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      
+      - name: Build and push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/skillswap-backend:latest
+      
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/skillswap-frontend:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/skillswap-backend:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/skillswap-frontend:latest
+            docker stop skillswap-backend || true
+            docker stop skillswap-frontend || true
+            docker rm skillswap-backend || true
+            docker rm skillswap-frontend || true
+            docker run -d --name skillswap-backend -p 5000:5000 -e MONGODB_URI="${{ secrets.MONGODB_URI }}" -e JWT_SECRET="${{ secrets.JWT_SECRET }}" ${{ secrets.DOCKER_HUB_USERNAME }}/skillswap-backend:latest
+            docker run -d --name skillswap-frontend -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/skillswap-frontend:latest

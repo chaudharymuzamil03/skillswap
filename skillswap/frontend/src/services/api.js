@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://35.172.194.189:5000/api';
 
 export const authAPI = {
     register: async (userData) => {

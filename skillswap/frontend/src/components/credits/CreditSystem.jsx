@@ -15,7 +15,7 @@ const CreditSystem = ({ user }) => {
             setLoading(true);
             console.log('🔍 Fetching transactions for user:', user.id);
             
-            const response = await fetch(`http://35.172.194.189:5000/api/users/${user.id}/transactions`);
+            const response = await fetch(`http://32.198.132.159:5000/api/users/${user.id}/transactions`);
             
             if (response.ok) {
                 const data = await response.json();

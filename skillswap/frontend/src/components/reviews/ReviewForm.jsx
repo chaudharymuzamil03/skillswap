@@ -38,7 +38,7 @@ const ReviewForm = ({
 
     const checkCanReview = async () => {
         try {
-            let url = `http://35.172.194.189:5000/api/users/${currentUser.id}/can-review/${targetUser.id}`;
+            let url = `http://32.198.132.159:5000/api/users/${currentUser.id}/can-review/${targetUser.id}`;
             if (sessionId) url += `?sessionId=${sessionId}`;
             if (swapRequestId) url += `?swapRequestId=${swapRequestId}`;
             
@@ -76,7 +76,7 @@ const ReviewForm = ({
         }
 
         try {
-            const response = await fetch('http://35.172.194.189:5000/api/reviews', {
+            const response = await fetch('http://32.198.132.159:5000/api/reviews', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

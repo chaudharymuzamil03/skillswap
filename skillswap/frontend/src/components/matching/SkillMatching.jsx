@@ -62,7 +62,7 @@ const SkillMatching = ({ user }) => {
     // NEW: Fetch completed skills for current user
     const fetchCompletedSkills = async () => {
         try {
-            const response = await fetch(`http://35.172.194.189:5000/api/users/${user.id}/sessions`);
+            const response = await fetch(`http://32.198.132.159:5000/api/users/${user.id}/sessions`);
             const data = await response.json();
             
             if (data.success && data.progress) {
@@ -170,7 +170,7 @@ const SkillMatching = ({ user }) => {
             const completedSkillsList = await fetchCompletedSkills();
             
             // Fetch all users
-            const response = await fetch('http://35.172.194.189:5000/api/matching/users');
+            const response = await fetch('http://32.198.132.159:5000/api/matching/users');
             const data = await response.json();
             
             if (data.success && data.users) {
@@ -179,7 +179,7 @@ const SkillMatching = ({ user }) => {
                 
                 // Get pending requests to check status
                 try {
-                    const requestsRes = await fetch(`http://35.172.194.189:5000/api/users/${user.id}/swap-requests`);
+                    const requestsRes = await fetch(`http://32.198.132.159:5000/api/users/${user.id}/swap-requests`);
                     const requestsData = await requestsRes.json();
                     
                     if (requestsData.success && requestsData.activeExchanges) {
@@ -250,7 +250,7 @@ const SkillMatching = ({ user }) => {
                 return;
             }
             
-            const response = await fetch('http://35.172.194.189:5000/api/matching/request', {
+            const response = await fetch('http://32.198.132.159:5000/api/matching/request', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

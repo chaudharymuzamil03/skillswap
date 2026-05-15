@@ -14,7 +14,7 @@ const AdminReports = () => {
         try {
             setLoading(true);
             console.log(`🔍 Fetching reports for range: ${dateRange}`);
-            const response = await fetch(`http://35.172.194.189:5000/api/admin/reports?range=${dateRange}`);
+            const response = await fetch(`http://32.198.132.159:5000/api/admin/reports?range=${dateRange}`);
             const data = await response.json();
             console.log('📊 Report Data Received:', data);
             

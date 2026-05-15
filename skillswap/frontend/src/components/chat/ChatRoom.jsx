@@ -66,7 +66,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
     const fetchMessages = async () => {
         try {
             const response = await fetch(
-                `http://35.172.194.189:5000/api/chats/${chat._id}/messages?userId=${currentUser.id}`
+                `http://32.198.132.159:5000/api/chats/${chat._id}/messages?userId=${currentUser.id}`
             );
             const data = await response.json();
             if (data.success) {
@@ -82,7 +82,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
     const fetchSessions = async () => {
         try {
             const response = await fetch(
-                `http://35.172.194.189:5000/api/users/${currentUser.id}/sessions`
+                `http://32.198.132.159:5000/api/users/${currentUser.id}/sessions`
             );
             const data = await response.json();
             if (data.success) {
@@ -102,7 +102,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
         if (!newMessage.trim()) return;
 
         try {
-            const response = await fetch(`http://35.172.194.189:5000/api/chats/${chat._id}/messages`, {
+            const response = await fetch(`http://32.198.132.159:5000/api/chats/${chat._id}/messages`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -149,7 +149,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
         }
         
         try {
-            const response = await fetch(`http://35.172.194.189:5000/api/sessions/${sessionId}/complete`, {
+            const response = await fetch(`http://32.198.132.159:5000/api/sessions/${sessionId}/complete`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -650,7 +650,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                                         onClick={async () => {
                                             if (completedSession) {
                                                 const response = await fetch(
-                                                    `http://35.172.194.189:5000/api/users/${currentUser.id}/can-review/${targetUser.id}?sessionId=${completedSession._id}`
+                                                    `http://32.198.132.159:5000/api/users/${currentUser.id}/can-review/${targetUser.id}?sessionId=${completedSession._id}`
                                                 );
                                                 const data = await response.json();
                                                 if (!data.canReview && data.reason === 'You have already reviewed this session') {

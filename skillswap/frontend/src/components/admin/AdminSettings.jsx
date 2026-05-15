@@ -23,7 +23,7 @@ const AdminSettings = () => {
     const fetchSettings = async () => {
         try {
             // You'll need to create this endpoint
-            const response = await fetch('http://35.172.194.189:5000/api/admin/settings');
+            const response = await fetch('http://32.198.132.159:5000/api/admin/settings');
             const data = await response.json();
             if (data.success) {
                 setSettings(data.settings);
@@ -40,7 +40,7 @@ const AdminSettings = () => {
         setMessage('');
 
         try {
-            const response = await fetch('http://35.172.194.189:5000/api/admin/settings', {
+            const response = await fetch('http://32.198.132.159:5000/api/admin/settings', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(settings)

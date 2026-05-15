@@ -18,7 +18,7 @@ const ReviewList = ({ userId, currentUser }) => {
             setError('');
             
             console.log('🌍 Fetching ALL platform reviews...');
-            const response = await fetch(`http://35.172.194.189:5000/api/reviews/all`);
+            const response = await fetch(`http://32.198.132.159:5000/api/reviews/all`);
             const data = await response.json();
             
             console.log('📦 All reviews response:', data);

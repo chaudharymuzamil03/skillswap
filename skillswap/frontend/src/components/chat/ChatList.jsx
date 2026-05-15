@@ -15,7 +15,7 @@ const ChatList = ({ currentUser, onSelectChat }) => {
 
     const fetchChats = async () => {
         try {
-            const response = await fetch(`http://35.172.194.189:5000/api/users/${currentUser.id}/chats`);
+            const response = await fetch(`http://32.198.132.159:5000/api/users/${currentUser.id}/chats`);
             const data = await response.json();
             if (data.success) {
                 setChats(data.chats);

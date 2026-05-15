@@ -36,7 +36,7 @@ const UserManagement = ({ currentUser }) => {
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            const response = await fetch('http://35.172.194.189:5000/api/admin/users');
+            const response = await fetch('http://32.198.132.159:5000/api/admin/users');
             const data = await response.json();
             
             if (data.success) {
@@ -81,7 +81,7 @@ const UserManagement = ({ currentUser }) => {
     // Handle save edit
     const handleSaveEdit = async () => {
         try {
-            const response = await fetch(`http://35.172.194.189:5000/api/admin/users/${editingUser._id}`, {
+            const response = await fetch(`http://32.198.132.159:5000/api/admin/users/${editingUser._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -119,7 +119,7 @@ const UserManagement = ({ currentUser }) => {
     // Confirm delete
     const handleConfirmDelete = async () => {
         try {
-            const response = await fetch(`http://35.172.194.189:5000/api/admin/users/${userToDelete._id}`, {
+            const response = await fetch(`http://32.198.132.159:5000/api/admin/users/${userToDelete._id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -156,7 +156,7 @@ const UserManagement = ({ currentUser }) => {
     // Save skills
     const handleSaveSkills = async () => {
         try {
-            const response = await fetch(`http://35.172.194.189:5000/api/admin/users/${selectedUserSkills._id}/skills`, {
+            const response = await fetch(`http://32.198.132.159:5000/api/admin/users/${selectedUserSkills._id}/skills`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -205,7 +205,7 @@ const UserManagement = ({ currentUser }) => {
         }
 
         try {
-            const response = await fetch(`http://35.172.194.189:5000/api/admin/users/${selectedUserPassword._id}/password`, {
+            const response = await fetch(`http://32.198.132.159:5000/api/admin/users/${selectedUserPassword._id}/password`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

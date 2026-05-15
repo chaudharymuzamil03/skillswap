@@ -10,7 +10,7 @@ const SwapRequests = ({ user }) => {
             setLoading(true);
             console.log('🔄 Fetching swap requests for user:', user.id);
             
-            const response = await fetch(`http://35.172.194.189:5000/api/users/${user.id}/swap-requests`);
+            const response = await fetch(`http://32.198.132.159:5000/api/users/${user.id}/swap-requests`);
             const data = await response.json();
             
             console.log('📨 API Response:', data);
@@ -33,7 +33,7 @@ const SwapRequests = ({ user }) => {
 
     const handleRequestAction = async (requestId, action) => {
         try {
-            const response = await fetch(`http://35.172.194.189:5000/api/swap-requests/${requestId}`, {
+            const response = await fetch(`http://32.198.132.159:5000/api/swap-requests/${requestId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

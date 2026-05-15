@@ -48,7 +48,7 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
             const learnerId = isMeTeaching ? otherUser._id : currentUser.id;
             
             const response = await fetch(
-                `http://35.172.194.189:5000/api/skill-progress/check?` + 
+                `http://32.198.132.159:5000/api/skill-progress/check?` + 
                 `swapRequestId=${chat.swapRequestId._id}&` +
                 `skill=${skill}&` +
                 `teacherId=${teacherId}&` +
@@ -142,7 +142,7 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
             const teacherName = isMeTeaching ? currentUser.name : otherUser.name;
             const learnerName = isMeTeaching ? otherUser.name : currentUser.name;
 
-            const response = await fetch('http://35.172.194.189:5000/api/sessions', {
+            const response = await fetch('http://32.198.132.159:5000/api/sessions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -284,9 +284,6 @@
     border-radius: 12px;
 }
 
-/* ============================================
-   NEW: Session Status Styles
-   ============================================ */
 .session-status {
     display: inline-block;
     padding: 4px 10px;
@@ -346,9 +343,6 @@
     transform: translateY(-1px);
 }
 
-/* ============================================
-   NEW: Complete Button Styles
-   ============================================ */
 .complete-button {
     background: #28a745;
     color: white;
@@ -374,7 +368,6 @@
     transform: translateY(0);
 }
 
-/* Status Badges */
 .status-badge {
     display: inline-block;
     padding: 4px 12px;
@@ -399,7 +392,6 @@
     color: #856404;
 }
 
-/* Completed Session Style */
 .session-completed-tag {
     color: #28a745;
     font-weight: bold;
@@ -422,7 +414,6 @@
     gap: 4px;
 }
 
-/* Credit Transfer Notification */
 .credit-notification {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -447,7 +438,7 @@
 }
 
 /* ============================================
-   Messages Container (Unchanged)
+   Messages Container
    ============================================ */
 .messages-container {
     flex: 1;
@@ -611,7 +602,7 @@
     margin-bottom: 15px;
 }
 
-/* Modal Styles (Unchanged) */
+/* Modal Styles */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -771,40 +762,6 @@
     border-radius: 0 0 16px 16px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .chat-room {
-        height: 100vh;
-        border-radius: 0;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 100;
-    }
-
-    .modal-content {
-        width: 95%;
-        margin: 20px;
-    }
-
-    .form-row {
-        flex-direction: column;
-        gap: 0;
-    }
-
-    .session-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .session-actions {
-        width: 100%;
-        justify-content: flex-end;
-    }
-}
 /* Review Popup Animation */
 @keyframes slideUp {
     from {
@@ -819,4 +776,122 @@
 
 .modal-content {
     animation: slideUp 0.3s ease;
+}
+
+/* ============================================
+   FIXED: Mobile Responsive - Chat Room only
+   ============================================ */
+@media (max-width: 768px) {
+    /* Chat Room full screen on mobile */
+    .chat-room {
+        height: 100vh !important;
+        border-radius: 0 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        z-index: 1000 !important;
+        background: white !important;
+    }
+
+    /* Chat header padding */
+    .chat-header {
+        padding: 12px 16px !important;
+        gap: 8px !important;
+    }
+
+    /* Back button visible on mobile */
+    .back-button {
+        display: block !important;
+        font-size: 1.2rem !important;
+        padding: 8px !important;
+    }
+
+    /* User info text smaller */
+    .chat-user-info h3 {
+        font-size: 1rem !important;
+    }
+
+    .skill-badge {
+        font-size: 0.7rem !important;
+        padding: 2px 8px !important;
+    }
+
+    /* Schedule button smaller */
+    .schedule-button {
+        padding: 6px 12px !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Messages container padding */
+    .messages-container {
+        padding: 12px !important;
+    }
+
+    /* Message bubbles */
+    .message-content-wrapper {
+        max-width: 80% !important;
+    }
+
+    .message-text {
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* Message input form */
+    .message-input-form {
+        padding: 10px 12px !important;
+    }
+
+    .message-input-form input {
+        padding: 10px 14px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .message-input-form button {
+        padding: 10px 18px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* Upcoming sessions */
+    .upcoming-sessions {
+        padding: 10px 12px !important;
+    }
+
+    .session-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+    }
+
+    .session-actions {
+        width: 100% !important;
+        justify-content: flex-end !important;
+    }
+
+    .join-button, .complete-button {
+        padding: 5px 12px !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Modal on mobile */
+    .modal-content {
+        width: 95% !important;
+        margin: 10px !important;
+        max-height: 85vh !important;
+    }
+
+    .modal-header {
+        padding: 15px !important;
+    }
+
+    .schedule-modal form {
+        padding: 15px !important;
+    }
+
+    .form-row {
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
 }

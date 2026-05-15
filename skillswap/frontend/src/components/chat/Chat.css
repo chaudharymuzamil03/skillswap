@@ -1068,3 +1068,101 @@
         font-size: 0.85rem;
     }
 }
+/* Your existing CSS stays exactly as it was - no changes to laptop layout */
+/* Just add these lines at the END of your Chat.css file */
+
+/* ============================================
+   MOBILE FIX ONLY - DO NOT CHANGE ANYTHING ABOVE
+   ============================================ */
+@media (max-width: 768px) {
+    /* Fix message input - smaller send button */
+    .message-input-form {
+        padding: 10px 12px !important;
+    }
+    
+    .message-input-form input {
+        padding: 10px 14px !important;
+        font-size: 14px !important;
+        flex: 1 !important;
+    }
+    
+    .message-input-form button {
+        padding: 8px 18px !important;
+        font-size: 13px !important;
+        width: auto !important;
+        min-width: 60px !important;
+    }
+    
+    /* Completed skill cards - show full details */
+    .completed-skill-card {
+        width: 210px !important;
+        padding: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    
+    .completed-skill-icon {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 16px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    .completed-skill-info {
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+    
+    .completed-skill-name {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    .completed-skill-user {
+        font-size: 10px !important;
+        margin-top: 2px !important;
+        color: #666 !important;
+    }
+    
+    .rate-button {
+        padding: 5px 12px !important;
+        font-size: 11px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    /* Make sure cards show properly */
+    .completed-skills-scroll {
+        display: flex !important;
+        gap: 10px !important;
+        overflow-x: auto !important;
+    }
+    
+    /* Fix verification message */
+    .verification-message {
+        margin: 8px 12px !important;
+        padding: 8px !important;
+        font-size: 12px !important;
+    }
+    
+    /* Session card fix */
+    .session-card {
+        padding: 10px 12px !important;
+    }
+    
+    .session-skill {
+        font-size: 14px !important;
+    }
+    
+    .session-time {
+        font-size: 11px !important;
+    }
+    
+    .join-button, .complete-button {
+        padding: 5px 12px !important;
+        font-size: 11px !important;
+    }
+}

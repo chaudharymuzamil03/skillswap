@@ -1,472 +1,1393 @@
-/* --- Main Layout Wrapper --- */
+/* Chat List Styles */
+.chat-list-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.chat-list-header {
+    padding: 20px;
+    border-bottom: 1px solid #eef2f6;
+}
+
+.chat-list-header h2 {
+    margin: 0 0 15px 0;
+    color: #2d3748;
+    font-size: 1.5rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #eef2f6;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    outline: none;
+}
+
+.search-box input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.chat-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.chat-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    margin-bottom: 5px;
+}
+
+.chat-item:hover {
+    background: #f7fafc;
+}
+
+.chat-item.unread {
+    background: #ebf8ff;
+}
+
+.chat-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.chat-avatar.large {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+}
+
+.chat-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.chat-name-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.chat-name {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 1rem;
+}
+
+.chat-time {
+    font-size: 0.75rem;
+    color: #718096;
+}
+
+.chat-last-message {
+    color: #718096;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 5px;
+}
+
+.chat-skill {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #edf2f7;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    color: #4a5568;
+}
+
+.unread-badge {
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 50px 20px;
+    color: #718096;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+/* Chat Room Styles */
 .chat-room {
     display: flex;
     flex-direction: column;
-    
-    /* Pure viewport screen ko top se bottom tak stretch karne ke liye */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;      /* Older browsers fallback */
-    height: 100dvh;     /* Dynamic mobile viewport heights ko handle karne ke liye */
-    
-    box-sizing: border-box;
-    overflow: hidden;
-    background-color: #f5f7fb; 
-    z-index: 999;
+    height: 600px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* --- Header Section --- */
 .chat-header {
-    flex-shrink: 0;
-    background: #ffffff;
-    padding: 12px 15px;
-    border-bottom: 1px solid #e1e4e8;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eef2f6;
+    background: white;
+    border-radius: 12px 12px 0 0;
 }
 
 .back-button {
     background: none;
     border: none;
-    font-size: 20px;
+    font-size: 1.5rem;
     cursor: pointer;
+    color: #4a5568;
     padding: 5px 10px;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .back-button {
+        display: block;
+    }
 }
 
 .chat-user-info {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     flex: 1;
-    margin-left: 10px;
-}
-
-.chat-avatar {
-    width: 35px;
-    height: 35px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
-
-.chat-avatar.large {
-    width: 40px;
-    height: 40px;
 }
 
 .chat-user-info h3 {
     margin: 0;
-    font-size: 16px;
-    color: #333;
+    color: #2d3748;
+    font-size: 1.2rem;
 }
 
 .skill-badge {
-    font-size: 11px;
-    background: #e3f2fd;
-    color: #0d47a1;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-top: 2px;
     display: inline-block;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-top: 5px;
 }
 
 .schedule-button {
-    background-color: #28a745;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
     color: white;
     border: none;
-    padding: 8px 12px;
+    padding: 8px 16px;
     border-radius: 20px;
-    font-size: 12px;
+    font-weight: 600;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s;
 }
 
-/* --- Notification Banner --- */
-.verification-message {
-    background-color: #fff3cd;
-    color: #856404;
-    padding: 10px;
-    text-align: center;
-    font-size: 13px;
-    border-bottom: 1px solid #ffeeba;
+.schedule-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
 }
 
-/* --- Scheduled/Upcoming Sessions Area --- */
 .upcoming-sessions {
-    background: #fff;
-    border-bottom: 1px solid #e1e4e8;
-    padding: 10px 15px;
-    max-height: 180px;
-    overflow-y: auto;
-    flex-shrink: 0;
+    padding: 15px 20px;
+    background: #f7fafc;
+    border-bottom: 1px solid #eef2f6;
 }
 
 .sessions-header {
     display: flex;
     justify-content: space-between;
-    font-weight: bold;
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+    color: #2d3748;
+    font-weight: 600;
 }
 
 .session-card {
-    background: #f8f9fa;
-    border: 1px solid #e1e4e8;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 8px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border-left: 4px solid #48bb78;
+}
+
+.session-card.completed {
+    border-left-color: #28a745;
+    opacity: 0.9;
+}
+
+.session-card.cancelled {
+    border-left-color: #dc3545;
+    opacity: 0.7;
 }
 
 .session-info {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    font-size: 12px;
+    gap: 5px;
 }
 
 .session-skill {
-    font-weight: bold;
-    font-size: 14px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.session-time {
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+.session-duration {
+    font-size: 0.8rem;
+    color: #48bb78;
+    background: #f0fff4;
+    padding: 2px 8px;
+    border-radius: 12px;
 }
 
 .session-status {
     display: inline-block;
-    padding: 2px 6px;
-    border-radius: 4px;
-    width: fit-content;
-    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: fit-content;
 }
 
-.session-status.scheduled { background: #e3f2fd; color: #0d47a1; }
-
-.progress-bar-container {
-    background: #e9ecef;
-    border-radius: 4px;
-    height: 12px;
-    width: 150px;
-    position: relative;
-    margin-top: 4px;
-    overflow: hidden;
+.session-status.scheduled {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
 }
 
-.progress-bar-fill {
-    background: #28a745;
-    height: 100%;
-    transition: width 0.3s;
+.session-status.completed {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
 }
 
-.progress-bar-container span {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 9px;
-    color: #333;
-    font-weight: bold;
+.session-status.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.session-status.ongoing {
+    background: #cce5ff;
+    color: #004085;
+    border: 1px solid #b8daff;
 }
 
 .session-actions {
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    align-items: center;
+    gap: 8px;
 }
 
-.join-button, .complete-button {
+.join-button {
     padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    text-align: center;
+    background: #48bb78;
+    color: white;
     text-decoration: none;
-    cursor: pointer;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s;
     border: none;
+    cursor: pointer;
 }
 
-.join-button { background: #007bff; color: white; }
-.complete-button { background: #28a745; color: white; }
-.complete-button:disabled { background: #ccc; cursor: not-allowed; }
-.verified-badge { color: #28a745; font-size: 12px; font-weight: bold; }
+.join-button:hover {
+    background: #38a169;
+    transform: translateY(-1px);
+}
 
-/* --- Messages Main Area (Stretches to consume gap) --- */
-.messages-container {
-    flex: 1;               /* Khali space khud absorb karega */
-    overflow-y: auto;
-    padding: 15px;
+.complete-button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.complete-button:hover {
+    background: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.complete-button:active {
+    transform: translateY(0);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-badge.completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-badge.scheduled {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.session-completed-tag {
+    color: #28a745;
+    font-weight: bold;
+    padding: 6px 12px;
+    background: #d4edda;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.session-cancelled-tag {
+    color: #dc3545;
+    font-weight: bold;
+    padding: 6px 12px;
+    background: #f8d7da;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.credit-notification {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
     display: flex;
-    flex-direction: column;
-    background-color: #f5f7fb;
+    align-items: center;
+    justify-content: space-between;
+    animation: slideIn 0.3s ease;
 }
 
-.loading-messages, .no-messages {
-    margin: auto;
-    text-align: center;
-    color: #888;
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
-.no-messages-icon {
-    font-size: 40px;
-    margin-bottom: 10px;
+/* ============================================
+   Messages Container
+   ============================================ */
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f7fafc;
 }
 
-/* Date Dividers */
+.message-group {
+    margin-bottom: 20px;
+}
+
 .date-divider {
     text-align: center;
-    margin: 15px 0;
+    margin: 20px 0;
     position: relative;
 }
 
-.date-divider span {
-    background: #f5f7fb;
-    padding: 4px 10px;
-    font-size: 11px;
-    color: #777;
-    border-radius: 10px;
-    position: relative;
-    z-index: 2;
-}
-
-.date-divider::after {
+.date-divider::before {
     content: '';
     position: absolute;
     left: 0;
     top: 50%;
     width: 100%;
     height: 1px;
-    background: #e1e4e8;
-    z-index: 1;
+    background: #e2e8f0;
 }
 
-/* Chat Bubbles Style */
-.message-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.date-divider span {
+    background: #f7fafc;
+    padding: 0 15px;
+    color: #718096;
+    font-size: 0.8rem;
+    position: relative;
+    z-index: 1;
 }
 
 .message {
     display: flex;
-    gap: 8px;
-    max-width: 75%;
-    margin-bottom: 4px;
+    margin-bottom: 15px;
+    position: relative;
 }
 
 .message.own {
-    align-self: flex-end;
-    flex-direction: row-reverse;
-}
-
-.message.other {
-    align-self: flex-start;
+    justify-content: flex-end;
 }
 
 .message-avatar {
-    width: 30px;
-    height: 30px;
-    background: #6c757d;
-    color: white;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
+    background: #cbd5e0;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-right: 10px;
     flex-shrink: 0;
 }
 
 .message-content-wrapper {
-    display: flex;
-    flex-direction: column;
+    max-width: 70%;
 }
 
 .message-sender {
-    font-size: 11px;
-    color: #666;
-    margin-left: 4px;
+    font-size: 0.75rem;
+    color: #718096;
     margin-bottom: 2px;
+    margin-left: 12px;
 }
 
 .message-content {
-    padding: 10px 14px;
-    border-radius: 16px;
-    position: relative;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.message.own .message-content {
-    background-color: #007bff;
-    color: white;
-    border-bottom-right-radius: 4px;
-}
-
-.message.other .message-content {
-    background-color: #ffffff;
-    color: #333333;
-    border-bottom-left-radius: 4px;
-    border: 1px solid #e1e4e8;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
 }
 
 .message-text {
-    font-size: 14px;
+    background: white;
+    padding: 10px 15px;
+    border-radius: 18px;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    color: #2d3748;
     word-break: break-word;
 }
 
+.own .message-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 18px;
+}
+
 .message-time {
-    font-size: 9px;
-    display: block;
-    text-align: right;
-    margin-top: 4px;
-    opacity: 0.7;
+    font-size: 0.7rem;
+    color: #a0aec0;
+    white-space: nowrap;
 }
 
-/* --- Bottom Footer Stick Area --- */
-.chat-footer-wrapper {
-    margin-top: auto;       /* Items ko screen ke end point par lock karega */
-    flex-shrink: 0;
-    background-color: #ffffff;
-    border-top: 1px solid #e1e4e8;
-    padding: 12px 15px;
-    /* Device Safe area check modern smartphones ke liye */
-    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+.own .message-time {
+    color: #cbd5e0;
 }
 
-/* Input Form */
 .message-input-form {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
+    padding: 15px 20px;
+    background: white;
+    border-top: 1px solid #eef2f6;
+    border-radius: 0 0 12px 12px;
 }
 
 .message-input-form input {
     flex: 1;
     padding: 12px 16px;
-    border: 1px solid #ced4da;
-    border-radius: 24px;
+    border: 2px solid #eef2f6;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    margin-right: 10px;
     outline: none;
-    font-size: 14px;
-    background: #f8f9fa;
+    transition: all 0.3s;
 }
 
 .message-input-form input:focus {
-    border-color: #007bff;
-    background: #ffffff;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .message-input-form button {
-    background-color: #007bff;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    padding: 10px 18px;
-    border-radius: 20px;
-    font-weight: bold;
+    border-radius: 25px;
+    font-weight: 600;
     cursor: pointer;
-    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.message-input-form button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .message-input-form button:disabled {
-    background-color: #cccccc;
+    opacity: 0.5;
     cursor: not-allowed;
 }
 
-/* --- Completed Skills Section (At the absolute bottom edge) --- */
+.loading-messages,
+.no-messages {
+    text-align: center;
+    padding: 40px 20px;
+    color: #718096;
+}
+
+.no-messages-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #eef2f6;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 1.3rem;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #a0aec0;
+    padding: 5px 10px;
+    transition: all 0.3s;
+}
+
+.close-button:hover {
+    color: #718096;
+}
+
+.schedule-modal form {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #4a5568;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #eef2f6;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.cancel-button {
+    padding: 10px 20px;
+    background: white;
+    color: #718096;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.cancel-button:hover:not(:disabled) {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.schedule-submit-button {
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.schedule-submit-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+.schedule-submit-button:disabled,
+.cancel-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.error-message {
+    background: #fed7d7;
+    color: #c53030;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+.schedule-info {
+    padding: 15px 25px;
+    background: #ebf8ff;
+    color: #2c5282;
+    font-size: 0.85rem;
+    border-top: 1px solid #bee3f8;
+    border-radius: 0 0 16px 16px;
+}
+
+/* Review Popup Animation */
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    animation: slideUp 0.3s ease;
+}
+
+/* ============================================
+   FIXED: Mobile Responsive - Chat Room only
+   ============================================ */
+@media (max-width: 768px) {
+    /* Chat Room full screen on mobile */
+    .chat-room {
+        height: 100vh !important;
+        border-radius: 0 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        z-index: 1000 !important;
+        background: white !important;
+    }
+
+    /* Chat header padding */
+    .chat-header {
+        padding: 12px 16px !important;
+        gap: 8px !important;
+    }
+
+    /* Back button visible on mobile */
+    .back-button {
+        display: block !important;
+        font-size: 1.2rem !important;
+        padding: 8px !important;
+    }
+
+    /* User info text smaller */
+    .chat-user-info h3 {
+        font-size: 1rem !important;
+    }
+
+    .skill-badge {
+        font-size: 0.7rem !important;
+        padding: 2px 8px !important;
+    }
+
+    /* Schedule button smaller */
+    .schedule-button {
+        padding: 6px 12px !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Messages container padding */
+    .messages-container {
+        padding: 12px !important;
+    }
+
+    /* Message bubbles */
+    .message-content-wrapper {
+        max-width: 80% !important;
+    }
+
+    .message-text {
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* Message input form */
+    .message-input-form {
+        padding: 10px 12px !important;
+    }
+
+    .message-input-form input {
+        padding: 10px 14px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .message-input-form button {
+        padding: 10px 18px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* Upcoming sessions */
+    .upcoming-sessions {
+        padding: 10px 12px !important;
+    }
+
+    .session-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+    }
+
+    .session-actions {
+        width: 100% !important;
+        justify-content: flex-end !important;
+    }
+
+    .join-button, .complete-button {
+        padding: 5px 12px !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Modal on mobile */
+    .modal-content {
+        width: 95% !important;
+        margin: 10px !important;
+        max-height: 85vh !important;
+    }
+
+    .modal-header {
+        padding: 15px !important;
+    }
+
+    .schedule-modal form {
+        padding: 15px !important;
+    }
+
+    .form-row {
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
+}
+/* Completed Skills Section - Bottom Cards */
 .completed-skills-section {
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px dashed #e1e4e8;
+    background: white;
+    border-top: 1px solid #eef2f6;
+    padding: 16px;
+    margin-top: 0;
 }
 
 .completed-skills-header {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
-    font-weight: bold;
-    color: #495057;
-    margin-bottom: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #2d3748;
 }
 
 .completed-skills-scroll {
     display: flex;
-    gap: 10px;
-    overflow-x: auto;       /* Taaki cards horizontal swipe ho sakein screen space bacha kar */
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
     padding-bottom: 4px;
 }
 
-/* Custom scrollbar handling horizontal swiping list */
-.completed-skills-scroll::-webkit-scrollbar {
-    height: 4px;
-}
-.completed-skills-scroll::-webkit-scrollbar-thumb {
-    background: #ced4da;
-    border-radius: 4px;
-}
-
 .completed-skill-card {
-    flex-shrink: 0;
-    width: 270px;
-    background: #ffffff;
-    border: 1px solid #dee2e6;
-    border-radius: 10px;
-    padding: 10px;
+    flex: 0 0 auto;
+    width: 250px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 12px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    gap: 12px;
+    border: 1px solid #eef2f6;
 }
 
 .completed-skill-icon {
-    width: 36px;
-    height: 36px;
-    background: #e8f5e9;
-    color: #2e7d32;
-    border-radius: 8px;
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 1.2rem;
 }
 
 .completed-skill-info {
     flex: 1;
-    margin-left: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
+    min-width: 0;
 }
 
 .completed-skill-name {
-    font-weight: bold;
-    font-size: 13px;
-    color: #212529;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #2d3748;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.completed-skill-user, .completed-skill-rating {
-    font-size: 11px;
-    color: #6c757d;
+.completed-skill-user {
+    font-size: 0.75rem;
+    color: #718096;
+    margin-top: 2px;
 }
 
 .rate-button {
-    background: #fff;
-    border: 1px solid #ffc107;
-    color: #ffc107;
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: bold;
+    background: #ffc107;
+    color: #000;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .rate-button:hover {
-    background: #ffc107;
-    color: #fff;
+    background: #e0a800;
+    transform: translateY(-1px);
+}
+
+.rate-button:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+}
+
+/* Message Input - WhatsApp style */
+.message-input-form {
+    background: white;
+    border-top: 1px solid #eef2f6;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+}
+
+.message-input-form input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #eef2f6;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.message-input-form input:focus {
+    border-color: #667eea;
+}
+
+.message-input-form button {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* Chat Room Layout */
+.chat-room {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: white;
+}
+
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background: #f7fafc;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .completed-skill-card {
+        width: 220px;
+        padding: 10px;
+    }
+    
+    .completed-skill-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .completed-skill-name {
+        font-size: 0.8rem;
+    }
+    
+    .rate-button {
+        padding: 5px 12px;
+        font-size: 0.7rem;
+    }
+    
+    .message-input-form input {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+    }
+    
+    .message-input-form button {
+        padding: 10px 18px;
+        font-size: 0.85rem;
+    }
+}
+/* Your existing CSS stays exactly as it was - no changes to laptop layout */
+/* Just add these lines at the END of your Chat.css file */
+
+/* ============================================
+   MOBILE FIX ONLY - DO NOT CHANGE ANYTHING ABOVE
+   ============================================ */
+@media (max-width: 768px) {
+    /* Fix message input - smaller send button */
+    .message-input-form {
+        padding: 10px 12px !important;
+    }
+    
+    .message-input-form input {
+        padding: 10px 14px !important;
+        font-size: 14px !important;
+        flex: 1 !important;
+    }
+    
+    .message-input-form button {
+        padding: 8px 18px !important;
+        font-size: 13px !important;
+        width: auto !important;
+        min-width: 60px !important;
+    }
+    
+    /* Completed skill cards - show full details */
+    .completed-skill-card {
+        width: 210px !important;
+        padding: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    
+    .completed-skill-icon {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 16px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    .completed-skill-info {
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+    
+    .completed-skill-name {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    .completed-skill-user {
+        font-size: 10px !important;
+        margin-top: 2px !important;
+        color: #666 !important;
+    }
+    
+    .rate-button {
+        padding: 5px 12px !important;
+        font-size: 11px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    /* Make sure cards show properly */
+    .completed-skills-scroll {
+        display: flex !important;
+        gap: 10px !important;
+        overflow-x: auto !important;
+    }
+    
+    /* Fix verification message */
+    .verification-message {
+        margin: 8px 12px !important;
+        padding: 8px !important;
+        font-size: 12px !important;
+    }
+    
+    /* Session card fix */
+    .session-card {
+        padding: 10px 12px !important;
+    }
+    
+    .session-skill {
+        font-size: 14px !important;
+    }
+    
+    .session-time {
+        font-size: 11px !important;
+    }
+    
+    .join-button, .complete-button {
+        padding: 5px 12px !important;
+        font-size: 11px !important;
+    }
+}
+/* Your existing CSS above - DO NOT CHANGE ANYTHING */
+
+/* ============================================
+   MOBILE - EXACTLY LIKE LAPTOP, FULL SCREEN
+   ============================================ */
+/* ==========================================================================
+   FINAL MOBILE RESPONSIVE FIX (REPLACES ALL PREVIOUS MEDIA QUERIES AT THE END)
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* 1. Chat Room Full Screen & Dynamic Height Fix */
+    .chat-room {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100vh !important; /* Forces layout to use full screen area */
+        z-index: 1000 !important;
+        background: white !important;
+        border-radius: 0 !important;
+    }
+
+    /* 2. Responsive Chat Header */
+    .chat-header {
+        padding: 12px 14px !important;
+        gap: 8px !important;
+    }
+
+    .back-button {
+        display: block !important;
+        font-size: 1.3rem !important;
+        padding: 4px 8px !important;
+    }
+
+    .chat-user-info h3 {
+        font-size: 1rem !important;
+    }
+
+    .skill-badge {
+        font-size: 0.75rem !important;
+        padding: 2px 8px !important;
+    }
+
+    .schedule-button {
+        padding: 6px 12px !important;
+        font-size: 0.75rem !important;
+        white-space: nowrap;
+    }
+
+    /* 3. Message Area Configuration */
+    .messages-container {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+    }
+
+    .message-content-wrapper {
+        max-width: 85% !important;
+    }
+
+    .message-text {
+        padding: 8px 12px !important;
+        font-size: 0.9rem !important;
+    }
+
+    /* 4. Input Controls Fix */
+    .message-input-form {
+        padding: 8px 12px !important;
+        gap: 8px !important;
+    }
+
+    .message-input-form input {
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .message-input-form button {
+        padding: 10px 16px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* 5. Completed Skills Section & Overlapping Card Fix */
+    .completed-skills-section {
+        padding: 12px !important;
+    }
+
+    .completed-skills-header {
+        font-size: 0.85rem !important;
+        margin-bottom: 8px !important;
+    }
+
+    .completed-skills-scroll {
+        display: flex !important;
+        gap: 10px !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Fixed Card Layout - Prevents Overlapping */
+    .completed-skill-card {
+        flex: 0 0 auto !important;
+        width: 260px !important; /* Slightly wider to easily accommodate text and button side-by-side */
+        padding: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important; /* Forces items to stay in their own space */
+        gap: 8px !important;
+    }
+
+    .completed-skill-icon {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 1rem !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Info text behaves inside its flex boundary without spilling */
+    .completed-skill-info {
+        flex: 1 !important;
+        min-width: 0 !important;
+        padding-right: 4px;
+    }
+
+    .completed-skill-name {
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        line-height: 1.2;
+    }
+
+    .completed-skill-user {
+        font-size: 0.7rem !important;
+        margin-top: 1px !important;
+    }
+
+    /* Rate Button Adjusted to avoid absolute/sticky overlaying */
+    .rate-button {
+        padding: 6px 12px !important;
+        font-size: 0.75rem !important;
+        flex-shrink: 0 !important; /* Prevents button from shrinking or crushing */
+        position: relative !important;
+        width: auto !important;
+        height: auto !important;
+    }
+
+    /* Sessions Management */
+    .session-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+    }
+
+    .session-actions {
+        width: 100% !important;
+        justify-content: flex-end !important;
+    }
+}
+/* =======================================================
+   RE-FIX FOR BOTTOM GAP & COMPLETED CARDS STICKY OVERRIDE
+   ======================================================= */
+
+/* 1. Main ChatRoom core container override */
+.chat-room {
+    display: flex !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;      
+    height: 100dvh !important;     
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    background-color: #f5f7fb !important; 
+    z-index: 999 !important;
+}
+
+/* 2. Messages section to grow and consume layout space */
+.messages-container {
+    flex: 1 !important;               
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* 3. Footer sticky box wrapper */
+.chat-footer-wrapper {
+    margin-top: auto !important;       
+    flex-shrink: 0 !important;
+    background-color: #ffffff !important;
+    border-top: 1px solid #e1e4e8 !important;
+    padding: 12px 15px !important;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+}
+
+/* 4. Input layout inner flex */
+.message-input-form {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    margin-bottom: 8px !important;
+}
+
+/* 5. Completed Skills alignment context */
+.completed-skills-section {
+    margin-top: 12px !important;
+    padding-top: 10px !important;
+    border-top: 1px dashed #e1e4e8 !important;
+}
+
+.completed-skills-scroll {
+    display: flex !important;
+    gap: 10px !important;
+    overflow-x: auto !important;       
+    padding-bottom: 6px !important;
+}
+
+.completed-skill-card {
+    flex-shrink: 0 !important;
+    width: 270px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
 }

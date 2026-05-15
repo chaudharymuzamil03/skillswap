@@ -11,6 +11,211 @@ body {
   padding: 20px;
 }
 
+/* ============================================
+   MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+/* Small devices (phones, up to 768px) */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  .container {
+    padding: 15px !important;
+    margin: 20px auto !important;
+  }
+  
+  .stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  
+  .modules {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+  
+  .module-card {
+    padding: 18px !important;
+  }
+  
+  .match-card {
+    flex-direction: column !important;
+    padding: 15px !important;
+  }
+  
+  .header {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 15px !important;
+    padding: 15px !important;
+  }
+  
+  .user-info {
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+  
+  .tabs {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+  }
+  
+  .tab {
+    font-size: 14px !important;
+    padding: 10px !important;
+  }
+  
+  button, .btn {
+    width: 100% !important;
+    margin-bottom: 8px !important;
+    padding: 12px !important;
+    font-size: 14px !important;
+  }
+  
+  .btn-secondary {
+    width: 100% !important;
+  }
+  
+  input, select, textarea {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    padding: 12px !important;
+  }
+  
+  h1 {
+    font-size: 24px !important;
+  }
+  
+  h2 {
+    font-size: 20px !important;
+  }
+  
+  h3 {
+    font-size: 18px !important;
+  }
+  
+  h4 {
+    font-size: 16px !important;
+  }
+  
+  .stat-card {
+    padding: 15px !important;
+  }
+  
+  .stat-number {
+    font-size: 24px !important;
+  }
+  
+  .skill-tags {
+    gap: 6px !important;
+  }
+  
+  .skill-tag {
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+  }
+  
+  /* Make modals full width on mobile */
+  .modal-overlay .modal-content {
+    width: 95% !important;
+    margin: 10px auto !important;
+    padding: 20px !important;
+  }
+  
+  /* Chat responsive */
+  .chat-room {
+    height: 70vh !important;
+  }
+  
+  .messages-container {
+    padding: 12px !important;
+  }
+  
+  .message-bubble {
+    max-width: 85% !important;
+  }
+}
+
+/* Extra small devices (phones, up to 480px) */
+@media (max-width: 480px) {
+  .stats {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .stat-card {
+    margin-bottom: 10px !important;
+  }
+  
+  .skill-tags {
+    flex-wrap: wrap !important;
+  }
+  
+  .hide-on-mobile {
+    display: none !important;
+  }
+  
+  .full-width-mobile {
+    width: 100% !important;
+  }
+  
+  .stack-on-mobile {
+    display: block !important;
+    width: 100% !important;
+  }
+  
+  .text-center-mobile {
+    text-align: center !important;
+  }
+}
+
+/* Tablets (768px to 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .modules {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Landscape mode on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  body {
+    padding: 10px;
+  }
+  
+  .chat-room {
+    height: 60vh !important;
+  }
+  
+  .modal-content {
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+  }
+}
+
+/* Touch-friendly button sizes */
+button, .btn, a.clickable {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Improve scroll on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ============================================
+   ORIGINAL STYLES (unchanged below)
+   ============================================ */
+
 .App {
   min-height: 100vh;
 }
@@ -102,14 +307,16 @@ input:focus, select:focus {
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   margin-bottom: 20px;
   display: flex;
-  justify-content: between;
+  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .user-info {
   display: flex;
   align-items: center;
   gap: 15px;
+  flex-wrap: wrap;
 }
 
 .avatar {
@@ -210,6 +417,7 @@ input:focus, select:focus {
   display: flex;
   gap: 15px;
   align-items: start;
+  flex-wrap: wrap;
 }
 
 .match-avatar {
@@ -228,6 +436,7 @@ input:focus, select:focus {
   font-size: 12px;
   font-weight: bold;
 }
+
 /* ============================================
    FIXED: Prevent Page Auto-scroll
    ============================================ */

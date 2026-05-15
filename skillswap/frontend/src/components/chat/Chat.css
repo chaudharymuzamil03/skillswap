@@ -1166,3 +1166,232 @@
         font-size: 11px !important;
     }
 }
+/* Your existing CSS above - DO NOT CHANGE ANYTHING */
+
+/* ============================================
+   MOBILE - EXACTLY LIKE LAPTOP, FULL SCREEN
+   ============================================ */
+@media (max-width: 768px) {
+    /* Make chat room full screen */
+    .chat-room {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 1000 !important;
+        background: white !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Messages container - take available space */
+    .messages-container {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+    }
+    
+    /* Message input - exactly like laptop but mobile sized */
+    .message-input-form {
+        display: flex !important;
+        padding: 10px 12px !important;
+        background: white !important;
+        border-top: 1px solid #eef2f6 !important;
+        gap: 8px !important;
+    }
+    
+    .message-input-form input {
+        flex: 1 !important;
+        padding: 10px 14px !important;
+        border: 2px solid #eef2f6 !important;
+        border-radius: 25px !important;
+        font-size: 14px !important;
+        outline: none !important;
+    }
+    
+    .message-input-form button {
+        padding: 10px 20px !important;
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 25px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        cursor: pointer !important;
+        white-space: nowrap !important;
+    }
+    
+    /* Completed Skills Section - Exactly like laptop cards */
+    .completed-skills-section {
+        background: white !important;
+        border-top: 1px solid #eef2f6 !important;
+        padding: 12px 16px !important;
+        width: 100% !important;
+    }
+    
+    .completed-skills-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 10px !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+        color: #2d3748 !important;
+    }
+    
+    .completed-skills-scroll {
+        display: flex !important;
+        gap: 12px !important;
+        overflow-x: auto !important;
+        padding-bottom: 4px !important;
+    }
+    
+    /* Card - exactly like laptop */
+    .completed-skill-card {
+        flex: 0 0 auto !important;
+        width: 220px !important;
+        background: #f8f9fa !important;
+        border-radius: 12px !important;
+        padding: 10px 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        border: 1px solid #eef2f6 !important;
+    }
+    
+    .completed-skill-icon {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 10px !important;
+        background: linear-gradient(135deg, #48bb78, #38a169) !important;
+        color: white !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-weight: bold !important;
+        font-size: 18px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    .completed-skill-info {
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+    
+    .completed-skill-name {
+        font-weight: 600 !important;
+        font-size: 13px !important;
+        color: #2d3748 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    .completed-skill-user {
+        font-size: 11px !important;
+        color: #718096 !important;
+        margin-top: 2px !important;
+    }
+    
+    /* Rate button - inside card, not overlapping */
+    .rate-button {
+        background: #ffc107 !important;
+        color: #000 !important;
+        border: none !important;
+        padding: 5px 12px !important;
+        border-radius: 8px !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.2s !important;
+        flex-shrink: 0 !important;
+        margin-left: auto !important;
+    }
+    
+    .rate-button:hover {
+        background: #e0a800 !important;
+    }
+    
+    .rate-button:disabled {
+        background: #cbd5e0 !important;
+        cursor: not-allowed !important;
+    }
+    
+    /* Session cards */
+    .session-card {
+        padding: 12px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .session-skill {
+        font-size: 14px !important;
+    }
+    
+    .session-time {
+        font-size: 11px !important;
+    }
+    
+    .join-button, .complete-button {
+        padding: 5px 12px !important;
+        font-size: 11px !important;
+    }
+    
+    /* Chat header - full width */
+    .chat-header {
+        padding: 12px 16px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .back-button {
+        display: block !important;
+        font-size: 20px !important;
+        padding: 5px 10px !important;
+    }
+    
+    .chat-user-info h3 {
+        font-size: 15px !important;
+    }
+    
+    .schedule-button {
+        padding: 6px 12px !important;
+        font-size: 12px !important;
+    }
+}
+/* Mobile - Exactly like laptop layout */
+@media (max-width: 768px) {
+    .chat-room {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 1000 !important;
+        background: white !important;
+    }
+    
+    .completed-skill-card {
+        width: 220px !important;
+        padding: 10px !important;
+    }
+    
+    .completed-skill-rating {
+        font-size: 10px !important;
+        color: #f59e0b !important;
+        margin-top: 2px !important;
+    }
+    
+    .message-input-form input {
+        font-size: 14px !important;
+        padding: 10px 14px !important;
+    }
+    
+    .message-input-form button {
+        padding: 10px 18px !important;
+        font-size: 13px !important;
+    }
+}

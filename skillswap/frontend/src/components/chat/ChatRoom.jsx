@@ -16,14 +16,6 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
     const inputRef = useRef(null);
     const userScrolled = useRef(false);
     const messagesContainerRef = useRef(null);
-    const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
 
     const otherUser = chat.participants?.find(p => p._id !== currentUser.id);
 
@@ -385,7 +377,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Message Input - WhatsApp style */}
+            {/* Message Input */}
             <form className="message-input-form" onSubmit={sendMessage}>
                 <input
                     ref={inputRef}
@@ -399,7 +391,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 </button>
             </form>
 
-            {/* Completed Skills - Exactly like laptop */}
+            {/* Completed Skills - Bottom Section */}
             {skillProgress.filter(p => p.status === 'completed').length > 0 && (
                 <div className="completed-skills-section">
                     <div className="completed-skills-header">
@@ -434,6 +426,11 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                                         <div className="completed-skill-user">
                                             👤 {targetUser.name.split(' ')[0]} · 🪙 {progress.totalSessions * 10}
                                         </div>
+                                        {completedSession && completedSession.rating && (
+                                            <div className="completed-skill-rating">
+                                                ⭐ Rated {completedSession.rating}/5
+                                            </div>
+                                        )}
                                     </div>
                                     <button
                                         onClick={async () => {

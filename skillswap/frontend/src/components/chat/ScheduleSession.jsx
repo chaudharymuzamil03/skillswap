@@ -15,9 +15,18 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
     const [availableTeachSkills, setAvailableTeachSkills] = useState([]);
     const [selectedRole, setSelectedRole] = useState('teacher');
     const [isLearningMode, setIsLearningMode] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Detect mobile screen
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // ============================================
-    // FIX: Get skills based on who is teaching what
+    // Get skills based on who is teaching what
     // ============================================
     useEffect(() => {
         const myTeachSkills = currentUser.teachSkills || [];
@@ -86,7 +95,7 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
     };
 
     // ============================================
-    // FIX: Get current date and time for min datetime
+    // Get current date and time for min datetime
     // ============================================
     const getMinDateTime = () => {
         const now = new Date();
@@ -126,10 +135,7 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
             const scheduledTime = new Date(`${date}T${time}`);
             const now = new Date();
             
-            // ============================================
-            // FIX: Allow current time onward (not just future)
-            // Check if time is in the past (not just same day)
-            // ============================================
+            // Check if time is in the past
             if (scheduledTime < now) {
                 setError('Scheduled time cannot be in the past. Please select current or future time.');
                 setLoading(false);
@@ -178,22 +184,27 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
     const hasLearnSkills = (availableTeachSkills.theirs?.length || 0) > 0;
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content schedule-modal">
+        <div className="modal-overlay" onClick={(e) => {
+            if (e.target === e.currentTarget) onClose();
+        }}>
+            <div className="modal-content schedule-modal" style={{
+                margin: isMobile ? '16px' : 'auto',
+                maxHeight: isMobile ? '90vh' : '85vh'
+            }}>
                 <div className="modal-header">
                     <h3>📅 Schedule a Skill Session</h3>
                     <button className="close-button" onClick={onClose}>×</button>
                 </div>
 
-                <div style={{ padding: '20px 25px 0 25px' }}>
+                <div style={{ padding: isMobile ? '15px 20px 0 20px' : '20px 25px 0 25px' }}>
                     <div style={{
                         background: 'linear-gradient(135deg, #667eea15, #764ba215)',
-                        padding: '15px',
+                        padding: isMobile ? '12px' : '15px',
                         borderRadius: '10px',
                         marginBottom: '20px'
                     }}>
-                        <h4 style={{ margin: '0 0 10px 0', color: '#4a5568' }}>🔄 Mutual Skill Swap</h4>
-                        <p style={{ margin: '0', fontSize: '0.9rem', color: '#4a5568' }}>
+                        <h4 style={{ margin: '0 0 10px 0', fontSize: isMobile ? '14px' : '16px', color: '#4a5568' }}>🔄 Mutual Skill Swap</h4>
+                        <p style={{ margin: '0', fontSize: isMobile ? '12px' : '0.9rem', color: '#4a5568' }}>
                             <strong>You can teach:</strong> {currentUser.teachSkills?.join(', ') || 'None added'}<br/>
                             <strong>{otherUser?.name} can teach:</strong> {otherUser?.teachSkills?.join(', ') || 'None added'}
                         </p>
@@ -202,9 +213,9 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
 
                 <form onSubmit={handleSubmit}>
                     {/* Role Selection - Who is teaching? */}
-                    <div className="form-group">
+                    <div className="form-group" style={{ padding: isMobile ? '0 20px' : '0 25px' }}>
                         <label>Who is teaching this session? *</label>
-                        <div style={{ display: 'flex', gap: '15px', marginTop: '5px' }}>
+                        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '10px' : '15px', marginTop: '5px' }}>
                             <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <input
                                     type="radio"
@@ -214,7 +225,7 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                                     onChange={() => handleRoleChange('teacher')}
                                     disabled={!hasTeachSkills}
                                 />
-                                <span style={{ fontWeight: selectedRole === 'teacher' ? '600' : 'normal' }}>
+                                <span style={{ fontWeight: selectedRole === 'teacher' ? '600' : 'normal', fontSize: isMobile ? '13px' : '14px' }}>
                                     👨‍🏫 Me ({currentUser.name}) teaching
                                 </span>
                             </label>
@@ -227,26 +238,26 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                                     onChange={() => handleRoleChange('learner')}
                                     disabled={!hasLearnSkills}
                                 />
-                                <span style={{ fontWeight: selectedRole === 'learner' ? '600' : 'normal' }}>
+                                <span style={{ fontWeight: selectedRole === 'learner' ? '600' : 'normal', fontSize: isMobile ? '13px' : '14px' }}>
                                     👨‍🏫 {otherUser?.name} teaching
                                 </span>
                             </label>
                         </div>
                         {selectedRole === 'teacher' && !hasTeachSkills && (
-                            <small style={{ color: '#dc3545', display: 'block', marginTop: '5px' }}>
+                            <small style={{ color: '#dc3545', display: 'block', marginTop: '5px', fontSize: isMobile ? '11px' : '12px' }}>
                                 ⚠️ You haven't added any skills you can teach. Add skills in your profile.
                             </small>
                         )}
                         {selectedRole === 'learner' && !hasLearnSkills && (
-                            <small style={{ color: '#dc3545', display: 'block', marginTop: '5px' }}>
+                            <small style={{ color: '#dc3545', display: 'block', marginTop: '5px', fontSize: isMobile ? '11px' : '12px' }}>
                                 ⚠️ {otherUser?.name} hasn't added any teaching skills yet.
                             </small>
                         )}
                     </div>
 
                     {/* Skill Selection - Based on who is teaching */}
-                    <div className="form-group">
-                        <label>
+                    <div className="form-group" style={{ padding: isMobile ? '0 20px' : '0 25px' }}>
+                        <label style={{ fontSize: isMobile ? '13px' : '14px' }}>
                             {selectedRole === 'teacher' 
                                 ? 'Skill You Will Teach *' 
                                 : `Skill ${otherUser?.name} Will Teach *`}
@@ -256,6 +267,7 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                             onChange={handleSkillChange}
                             required
                             disabled={!!existingProgress}
+                            style={{ fontSize: isMobile ? '14px' : '15px' }}
                         >
                             <option value="">
                                 {selectedRole === 'teacher'
@@ -272,23 +284,23 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                             }
                         </select>
                         {existingProgress && (
-                            <small style={{ color: '#28a745', display: 'block', marginTop: '5px' }}>
+                            <small style={{ color: '#28a745', display: 'block', marginTop: '5px', fontSize: isMobile ? '11px' : '12px' }}>
                                 ✓ Skill already in progress
                             </small>
                         )}
                     </div>
 
                     {skill && (
-                        <div className="form-group">
-                            <label>Session Progress</label>
+                        <div className="form-group" style={{ padding: isMobile ? '0 20px' : '0 25px' }}>
+                            <label style={{ fontSize: isMobile ? '13px' : '14px' }}>Session Progress</label>
                             <div style={{
                                 background: existingProgress ? '#e7f3ff' : '#f8f9fa',
-                                padding: '15px',
+                                padding: isMobile ? '12px' : '15px',
                                 borderRadius: '8px',
                                 border: existingProgress ? '1px solid #28a745' : '1px solid #e0e0e0'
                             }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                    <span style={{ fontWeight: '600' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
+                                    <span style={{ fontWeight: '600', fontSize: isMobile ? '13px' : '14px' }}>
                                         {existingProgress 
                                             ? `📊 Session #${sessionNumber} of ${totalSessions}` 
                                             : `🆕 New Skill - Setup Required`}
@@ -299,7 +311,7 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                                             color: 'white',
                                             padding: '4px 12px',
                                             borderRadius: '20px',
-                                            fontSize: '0.8rem',
+                                            fontSize: isMobile ? '11px' : '0.8rem',
                                             fontWeight: '600'
                                         }}>
                                             {existingProgress.completedSessions}/{totalSessions} Completed
@@ -311,9 +323,9 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                                     <>
                                         <div style={{
                                             width: '100%',
-                                            height: '10px',
+                                            height: '8px',
                                             background: '#edf2f7',
-                                            borderRadius: '5px',
+                                            borderRadius: '4px',
                                             overflow: 'hidden',
                                             marginBottom: '8px'
                                         }}>
@@ -321,14 +333,14 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                                                 width: `${(existingProgress.completedSessions / totalSessions) * 100}%`,
                                                 height: '100%',
                                                 background: 'linear-gradient(90deg, #48bb78, #38a169)',
-                                                borderRadius: '5px',
+                                                borderRadius: '4px',
                                                 transition: 'width 0.3s'
                                             }} />
                                         </div>
                                         <div style={{ 
                                             display: 'flex', 
                                             justifyContent: 'space-between',
-                                            fontSize: '0.8rem',
+                                            fontSize: isMobile ? '11px' : '0.8rem',
                                             color: '#4a5568'
                                         }}>
                                             <span>✓ {existingProgress.completedSessions} completed</span>
@@ -340,9 +352,14 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                         </div>
                     )}
 
-                    <div className="form-row">
+                    <div className="form-row" style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+                        gap: isMobile ? '12px' : '15px',
+                        padding: isMobile ? '0 20px' : '0 25px'
+                    }}>
                         <div className="form-group">
-                            <label>Total Sessions Needed</label>
+                            <label style={{ fontSize: isMobile ? '13px' : '14px' }}>Total Sessions Needed</label>
                             <input
                                 type="number"
                                 min="1"
@@ -356,8 +373,9 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                                     }
                                 }}
                                 disabled={!!existingProgress}
+                                style={{ fontSize: isMobile ? '14px' : '15px' }}
                             />
-                            <small style={{ color: existingProgress ? '#28a745' : '#666', fontSize: '11px' }}>
+                            <small style={{ color: existingProgress ? '#28a745' : '#666', fontSize: isMobile ? '10px' : '11px', display: 'block', marginTop: '4px' }}>
                                 {existingProgress 
                                     ? '✓ Locked - already in progress' 
                                     : 'How many sessions to complete this skill?'}
@@ -365,7 +383,7 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                         </div>
 
                         <div className="form-group">
-                            <label>Current Session #</label>
+                            <label style={{ fontSize: isMobile ? '13px' : '14px' }}>Current Session #</label>
                             <input
                                 type="number"
                                 min="1"
@@ -378,9 +396,13 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                                     }
                                 }}
                                 disabled={!!existingProgress}
-                                style={existingProgress ? { background: '#f8f9fa', cursor: 'not-allowed' } : {}}
+                                style={{ 
+                                    fontSize: isMobile ? '14px' : '15px',
+                                    background: existingProgress ? '#f8f9fa' : 'white',
+                                    cursor: existingProgress ? 'not-allowed' : 'text'
+                                }}
                             />
-                            <small style={{ color: existingProgress ? '#28a745' : '#666', fontSize: '11px' }}>
+                            <small style={{ color: existingProgress ? '#28a745' : '#666', fontSize: isMobile ? '10px' : '11px', display: 'block', marginTop: '4px' }}>
                                 {existingProgress 
                                     ? `✓ Next session is #${sessionNumber}` 
                                     : 'Which session number is this?'}
@@ -388,32 +410,39 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                         </div>
                     </div>
 
-                    <div className="form-row">
+                    <div className="form-row" style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+                        gap: isMobile ? '12px' : '15px',
+                        padding: isMobile ? '0 20px' : '0 25px'
+                    }}>
                         <div className="form-group">
-                            <label>Date *</label>
+                            <label style={{ fontSize: isMobile ? '13px' : '14px' }}>Date *</label>
                             <input
                                 type="date"
                                 value={date}
                                 onChange={(e) => setDate(e.target.value)}
                                 min={new Date().toISOString().split('T')[0]}
                                 required
+                                style={{ fontSize: isMobile ? '14px' : '15px' }}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label>Time *</label>
+                            <label style={{ fontSize: isMobile ? '13px' : '14px' }}>Time *</label>
                             <input
                                 type="time"
                                 value={time}
                                 onChange={(e) => setTime(e.target.value)}
                                 required
+                                style={{ fontSize: isMobile ? '14px' : '15px' }}
                             />
                         </div>
                     </div>
 
-                    <div className="form-group">
-                        <label>Duration</label>
-                        <select value={duration} onChange={(e) => setDuration(Number(e.target.value))}>
+                    <div className="form-group" style={{ padding: isMobile ? '0 20px' : '0 25px' }}>
+                        <label style={{ fontSize: isMobile ? '13px' : '14px' }}>Duration</label>
+                        <select value={duration} onChange={(e) => setDuration(Number(e.target.value))} style={{ fontSize: isMobile ? '14px' : '15px' }}>
                             <option value={30}>30 minutes</option>
                             <option value={60}>1 hour</option>
                             <option value={90}>1.5 hours</option>
@@ -421,28 +450,43 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                         </select>
                     </div>
 
-                    <div className="form-group">
-                        <label>Notes (Optional)</label>
+                    <div className="form-group" style={{ padding: isMobile ? '0 20px' : '0 25px' }}>
+                        <label style={{ fontSize: isMobile ? '13px' : '14px' }}>Notes (Optional)</label>
                         <textarea
                             placeholder="Add any notes or agenda for this session..."
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
                             rows="3"
+                            style={{ fontSize: isMobile ? '14px' : '15px' }}
                         />
                     </div>
 
                     {error && (
-                        <div className="error-message">
+                        <div className="error-message" style={{ 
+                            margin: isMobile ? '0 20px 15px 20px' : '0 25px 20px 25px',
+                            fontSize: isMobile ? '12px' : '13px'
+                        }}>
                             ⚠️ {error}
                         </div>
                     )}
 
-                    <div className="modal-actions">
+                    <div className="modal-actions" style={{ 
+                        display: 'flex', 
+                        gap: isMobile ? '10px' : '12px', 
+                        justifyContent: 'flex-end',
+                        padding: isMobile ? '0 20px 20px 20px' : '0 25px 25px 25px',
+                        flexDirection: isMobile ? 'column' : 'row'
+                    }}>
                         <button 
                             type="button" 
                             className="cancel-button" 
                             onClick={onClose}
                             disabled={loading}
+                            style={{ 
+                                width: isMobile ? '100%' : 'auto',
+                                padding: isMobile ? '12px' : '10px 20px',
+                                fontSize: isMobile ? '14px' : '14px'
+                            }}
                         >
                             Cancel
                         </button>
@@ -450,13 +494,21 @@ const ScheduleSession = ({ chat, currentUser, otherUser, onClose, onScheduled })
                             type="submit" 
                             className="schedule-submit-button"
                             disabled={loading || !skill || !date || !time || sessionNumber > totalSessions}
+                            style={{ 
+                                width: isMobile ? '100%' : 'auto',
+                                padding: isMobile ? '12px' : '10px 20px',
+                                fontSize: isMobile ? '14px' : '14px'
+                            }}
                         >
                             {loading ? 'Scheduling...' : `📅 Schedule Session #${sessionNumber}`}
                         </button>
                     </div>
                 </form>
 
-                <div className="schedule-info">
+                <div className="schedule-info" style={{ 
+                    padding: isMobile ? '12px 20px' : '12px 25px',
+                    fontSize: isMobile ? '10px' : '11px'
+                }}>
                     <small>
                         <strong>🔄 Mutual Swap:</strong><br/>
                         • 👨‍🏫 You teach: {currentUser.teachSkills?.join(', ') || 'None'}<br/>

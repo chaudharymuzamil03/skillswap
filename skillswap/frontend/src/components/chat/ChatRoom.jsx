@@ -16,12 +16,17 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
     const inputRef = useRef(null);
     const userScrolled = useRef(false);
     const messagesContainerRef = useRef(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const otherUser = chat.participants?.find(p => p._id !== currentUser.id);
 
-    // ============================================
-    // Scroll Handling
-    // ============================================
     const handleScroll = (e) => {
         if (!messagesContainerRef.current) return;
         const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
@@ -43,9 +48,6 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
         }
     };
 
-    // ============================================
-    // Fetch Messages and Sessions
-    // ============================================
     useEffect(() => {
         fetchMessages();
         fetchSessions();
@@ -122,9 +124,6 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
         }
     };
 
-    // ============================================
-    // Complete Session with Mutual Verification
-    // ============================================
     const completeSession = async (sessionId) => {
         const session = sessions.find(s => s._id === sessionId);
         const isTeacher = session?.teacherId?._id === currentUser.id || session?.teacherId === currentUser.id;
@@ -264,11 +263,8 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
 
     return (
         <div className="chat-room">
-            {/* Header */}
             <div className="chat-header">
-                <button className="back-button" onClick={onBack}>
-                    ←
-                </button>
+                <button className="back-button" onClick={onBack}>←</button>
                 <div className="chat-user-info">
                     <div className="chat-avatar large">
                         {otherUser?.name?.split(' ').map(n => n[0]).join('') || '?'}
@@ -282,42 +278,25 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                         )}
                     </div>
                 </div>
-                <button 
-                    className="schedule-button"
-                    onClick={() => setShowSchedule(true)}
-                >
+                <button className="schedule-button" onClick={() => setShowSchedule(true)}>
                     📅 Schedule Session
                 </button>
             </div>
 
             {verificationMessage && (
-                <div style={{
-                    background: '#fff3cd',
-                    color: '#856404',
-                    padding: '10px 20px',
-                    margin: '10px 20px',
-                    borderRadius: '8px',
-                    border: '1px solid #ffeeba',
-                    textAlign: 'center'
-                }}>
-                    {verificationMessage}
-                </div>
+                <div className="verification-message">{verificationMessage}</div>
             )}
 
-            {/* UPCOMING SESSIONS - Top */}
             {sessions.filter(s => s.status === 'scheduled').length > 0 && (
                 <div className="upcoming-sessions">
                     <div className="sessions-header">
                         <span>📅 Scheduled Sessions</span>
-                        <span style={{ fontSize: '0.8rem', color: '#718096' }}>
-                            {sessions.filter(s => s.status === 'scheduled').length}
-                        </span>
+                        <span>{sessions.filter(s => s.status === 'scheduled').length}</span>
                     </div>
                     {sessions.filter(s => s.status === 'scheduled').map(session => {
                         const progress = getSkillProgress(session.skill);
                         const teacher = isTeacher(session);
                         const verified = hasUserVerified(session);
-                        
                         const sessionTime = new Date(session.scheduledTime);
                         const now = new Date();
                         const canComplete = sessionTime <= now;
@@ -325,109 +304,37 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                         return (
                             <div key={session._id} className={`session-card ${session.status}`}>
                                 <div className="session-info">
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                                        <span className="session-skill">{session.skill}</span>
-                                        <span className={`session-status ${session.status}`}>
-                                            {session.status}
+                                    <div className="session-skill">{session.skill}</div>
+                                    <span className={`session-status ${session.status}`}>{session.status}</span>
+                                    {progress && (
+                                        <span className="session-progress">
+                                            Session {session.sessionNumber || progress.completedSessions + 1}/{progress.totalSessions}
                                         </span>
-                                        {progress && (
-                                            <span style={{
-                                                background: '#e7f3ff',
-                                                color: '#0066cc',
-                                                padding: '2px 10px',
-                                                borderRadius: '12px',
-                                                fontSize: '0.75rem',
-                                                fontWeight: '600'
-                                            }}>
-                                                Session {session.sessionNumber || progress.completedSessions + 1}/{progress.totalSessions}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <span className="session-time">
-                                        {new Date(session.scheduledTime).toLocaleString()}
-                                    </span>
-                                    <span className="session-duration">
-                                        {session.duration} mins
-                                    </span>
+                                    )}
+                                    <span className="session-time">{new Date(session.scheduledTime).toLocaleString()}</span>
+                                    <span className="session-duration">{session.duration} mins</span>
                                     
                                     {progress && progress.totalSessions > 1 && (
-                                        <div style={{ marginTop: '8px', width: '100%' }}>
-                                            <div style={{ 
-                                                display: 'flex', 
-                                                justifyContent: 'space-between',
-                                                fontSize: '0.7rem',
-                                                color: '#718096',
-                                                marginBottom: '4px'
-                                            }}>
-                                                <span>Progress</span>
-                                                <span>{progress.completedSessions}/{progress.totalSessions} sessions</span>
-                                            </div>
-                                            <div style={{
-                                                width: '100%',
-                                                height: '6px',
-                                                background: '#edf2f7',
-                                                borderRadius: '3px',
-                                                overflow: 'hidden'
-                                            }}>
-                                                <div style={{
-                                                    width: `${(progress.completedSessions / progress.totalSessions) * 100}%`,
-                                                    height: '100%',
-                                                    background: 'linear-gradient(90deg, #48bb78, #38a169)',
-                                                    borderRadius: '3px',
-                                                    transition: 'width 0.3s ease'
-                                                }} />
-                                            </div>
+                                        <div className="progress-bar-container">
+                                            <div className="progress-bar-fill" style={{ width: `${(progress.completedSessions / progress.totalSessions) * 100}%` }} />
+                                            <span>{progress.completedSessions}/{progress.totalSessions} sessions</span>
                                         </div>
                                     )}
                                     
                                     {session.verifiedBy?.length > 0 && (
-                                        <div style={{ 
-                                            marginTop: '5px', 
-                                            fontSize: '0.7rem', 
-                                            color: verified ? '#28a745' : '#856404'
-                                        }}>
-                                            {verified ? '✓ You verified' : '⏳ Waiting for your verification'} 
-                                            ({session.verifiedBy.length}/2)
+                                        <div className="verification-status">
+                                            {verified ? '✓ You verified' : '⏳ Waiting for your verification'} ({session.verifiedBy.length}/2)
                                         </div>
                                     )}
                                 </div>
-                                
                                 <div className="session-actions">
-                                    <a 
-                                        href={session.meetingLink} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="join-button"
-                                    >
-                                        Join
-                                    </a>
+                                    <a href={session.meetingLink} target="_blank" rel="noopener noreferrer" className="join-button">Join</a>
                                     {!verified && (
-                                        <button 
-                                            onClick={() => completeSession(session._id)}
-                                            className="complete-button"
-                                            disabled={!canComplete}
-                                            style={{
-                                                background: teacher ? '#28a745' : '#17a2b8',
-                                                opacity: canComplete ? 1 : 0.5,
-                                                cursor: canComplete ? 'pointer' : 'not-allowed'
-                                            }}
-                                            title={!canComplete ? `Session time: ${new Date(session.scheduledTime).toLocaleString()}.\nComplete button will be available after this time.` : ''}
-                                        >
+                                        <button onClick={() => completeSession(session._id)} className="complete-button" disabled={!canComplete}>
                                             {teacher ? '✓ Complete' : '✓ Confirm'}
                                         </button>
                                     )}
-                                    {verified && (
-                                        <span style={{
-                                            color: '#28a745',
-                                            fontSize: '0.8rem',
-                                            fontWeight: '600',
-                                            padding: '6px 12px',
-                                            background: '#d4edda',
-                                            borderRadius: '6px'
-                                        }}>
-                                            ✓ Verified
-                                        </span>
-                                    )}
+                                    {verified && <span className="verified-badge">✓ Verified</span>}
                                 </div>
                             </div>
                         );
@@ -435,11 +342,8 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 </div>
             )}
 
-            {/* MESSAGES CONTAINER - Middle (Takes remaining space) */}
-            <div 
-                className="messages-container" 
-                ref={messagesContainerRef}
-            >
+            {/* Messages Container */}
+            <div className="messages-container" ref={messagesContainerRef}>
                 {loading ? (
                     <div className="loading-messages">Loading messages...</div>
                 ) : messages.length === 0 ? (
@@ -451,19 +355,13 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 ) : (
                     Object.entries(messageGroups).map(([date, msgs]) => (
                         <div key={date} className="message-group">
-                            <div className="date-divider">
-                                <span>{date}</span>
-                            </div>
+                            <div className="date-divider"><span>{date}</span></div>
                             {msgs.map((message, index) => {
                                 const isOwn = message.senderId?._id === currentUser.id;
-                                const showAvatar = index === 0 || 
-                                    msgs[index - 1].senderId?._id !== message.senderId?._id;
+                                const showAvatar = index === 0 || msgs[index - 1].senderId?._id !== message.senderId?._id;
                                 
                                 return (
-                                    <div
-                                        key={message._id}
-                                        className={`message ${isOwn ? 'own' : 'other'}`}
-                                    >
+                                    <div key={message._id} className={`message ${isOwn ? 'own' : 'other'}`}>
                                         {!isOwn && showAvatar && (
                                             <div className="message-avatar">
                                                 {message.senderId?.name?.split(' ').map(n => n[0]).join('') || '?'}
@@ -471,17 +369,11 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                                         )}
                                         <div className="message-content-wrapper">
                                             {!isOwn && showAvatar && (
-                                                <div className="message-sender">
-                                                    {message.senderId?.name || 'Unknown'}
-                                                </div>
+                                                <div className="message-sender">{message.senderId?.name || 'Unknown'}</div>
                                             )}
                                             <div className="message-content">
-                                                <div className="message-text">
-                                                    {message.content}
-                                                </div>
-                                                <span className="message-time">
-                                                    {formatTime(message.createdAt)}
-                                                </span>
+                                                <div className="message-text">{message.content}</div>
+                                                <span className="message-time">{formatTime(message.createdAt)}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -493,7 +385,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* MESSAGE INPUT FORM - Above completed skills */}
+            {/* Message Input - WhatsApp style */}
             <form className="message-input-form" onSubmit={sendMessage}>
                 <input
                     ref={inputRef}
@@ -501,14 +393,13 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                     placeholder="Type a message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    autoFocus
                 />
                 <button type="submit" disabled={!newMessage.trim()}>
                     Send
                 </button>
             </form>
 
-            {/* COMPLETED SKILLS - Bottom (Last) */}
+            {/* Completed Skills - Exactly like laptop */}
             {skillProgress.filter(p => p.status === 'completed').length > 0 && (
                 <div className="completed-skills-section">
                     <div className="completed-skills-header">
@@ -522,30 +413,22 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                                 name: progress.teacherId?.name || 'Teacher',
                                 email: progress.teacherId?.email || ''
                             };
-                            
                             const learner = {
                                 id: progress.learnerId?._id || progress.learnerId,
                                 name: progress.learnerId?.name || 'Learner',
                                 email: progress.learnerId?.email || ''
                             };
-                            
                             const isCurrentUserTeacher = progress.teacherId?._id === currentUser.id || progress.teacherId === currentUser.id;
                             const targetUser = isCurrentUserTeacher ? learner : teacher;
-                            
                             const completedSession = sessions.find(s => 
-                                s.skill === progress.skill && 
-                                s.status === 'completed' &&
-                                (
-                                    (s.teacherId?._id === teacher.id && s.learnerId?._id === learner.id) ||
-                                    (s.teacherId?._id === learner.id && s.learnerId?._id === teacher.id)
-                                )
+                                s.skill === progress.skill && s.status === 'completed' &&
+                                ((s.teacherId?._id === teacher.id && s.learnerId?._id === learner.id) ||
+                                 (s.teacherId?._id === learner.id && s.learnerId?._id === teacher.id))
                             );
 
                             return (
                                 <div key={progress._id} className="completed-skill-card">
-                                    <div className="completed-skill-icon">
-                                        {progress.skill.charAt(0).toUpperCase()}
-                                    </div>
+                                    <div className="completed-skill-icon">{progress.skill.charAt(0).toUpperCase()}</div>
                                     <div className="completed-skill-info">
                                         <div className="completed-skill-name">{progress.skill}</div>
                                         <div className="completed-skill-user">
@@ -564,7 +447,6 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                                                     return;
                                                 }
                                             }
-                                            
                                             setShowReviewPopup({
                                                 targetUser,
                                                 sessionId: completedSession?._id,

@@ -49,7 +49,8 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
 
     useEffect(() => {
         const lastMessage = messages[messages.length - 1];
-        const isOwnMessage = lastMessage?.senderId?._id === currentUser.id;
+        // Id check ko handle kiya agar backend object ya string me se kuch bhi bheje
+        const isOwnMessage = lastMessage?.senderId?._id === currentUser.id || lastMessage?.senderId === currentUser.id;
         if (isOwnMessage) {
             scrollToBottom();
         } else if (!userScrolled.current) {
@@ -349,8 +350,9 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                         <div key={date} className="message-group">
                             <div className="date-divider"><span>{date}</span></div>
                             {msgs.map((message, index) => {
-                                const isOwn = message.senderId?._id === currentUser.id;
-                                const showAvatar = index === 0 || msgs[index - 1].senderId?._id !== message.senderId?._id;
+                                // Id types comparison fix kiya taaki UI structure break na ho
+                                const isOwn = message.senderId?._id === currentUser.id || message.senderId === currentUser.id;
+                                const showAvatar = index === 0 || (msgs[index - 1].senderId?._id !== message.senderId?._id && msgs[index - 1].senderId !== message.senderId);
                                 
                                 return (
                                     <div key={message._id} className={`message ${isOwn ? 'own' : 'other'}`}>

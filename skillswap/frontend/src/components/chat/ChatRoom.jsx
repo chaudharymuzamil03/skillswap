@@ -129,7 +129,6 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
         const session = sessions.find(s => s._id === sessionId);
         const isTeacher = session?.teacherId?._id === currentUser.id || session?.teacherId === currentUser.id;
         
-        // Check if session date/time has passed
         const sessionTime = new Date(session.scheduledTime);
         const now = new Date();
         
@@ -265,6 +264,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
 
     return (
         <div className="chat-room">
+            {/* Header */}
             <div className="chat-header">
                 <button className="back-button" onClick={onBack}>
                     ←
@@ -304,7 +304,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 </div>
             )}
 
-            {/* ACTIVE SESSIONS - Scheduled */}
+            {/* UPCOMING SESSIONS - Top */}
             {sessions.filter(s => s.status === 'scheduled').length > 0 && (
                 <div className="upcoming-sessions">
                     <div className="sessions-header">
@@ -318,7 +318,6 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                         const teacher = isTeacher(session);
                         const verified = hasUserVerified(session);
                         
-                        // Check if session can be completed (time has passed)
                         const sessionTime = new Date(session.scheduledTime);
                         const now = new Date();
                         const canComplete = sessionTime <= now;
@@ -436,7 +435,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 </div>
             )}
 
-            {/* MESSAGES CONTAINER */}
+            {/* MESSAGES CONTAINER - Middle (Takes remaining space) */}
             <div 
                 className="messages-container" 
                 ref={messagesContainerRef}
@@ -494,6 +493,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 <div ref={messagesEndRef} />
             </div>
 
+            {/* MESSAGE INPUT FORM - Above completed skills */}
             <form className="message-input-form" onSubmit={sendMessage}>
                 <input
                     ref={inputRef}
@@ -508,52 +508,14 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 </button>
             </form>
 
-            {/* COMPLETED SKILLS */}
+            {/* COMPLETED SKILLS - Bottom (Last) */}
             {skillProgress.filter(p => p.status === 'completed').length > 0 && (
-                <div style={{
-                    margin: '16px',
-                    background: 'white',
-                    borderRadius: '16px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                    border: '1px solid #edf2f7',
-                    overflow: 'hidden'
-                }}>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '12px 16px',
-                        background: 'linear-gradient(135deg, #faf089, #f6e05e)',
-                        color: '#744210',
-                        borderBottom: '1px solid #faf089'
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '1.2rem' }}>🏆</span>
-                            <span style={{ fontWeight: '700', fontSize: '0.95rem' }}>
-                                Completed Skills
-                            </span>
-                        </div>
-                        <span style={{
-                            background: 'rgba(116, 66, 16, 0.1)',
-                            padding: '4px 12px',
-                            borderRadius: '20px',
-                            fontSize: '0.75rem',
-                            fontWeight: '700',
-                            color: '#744210'
-                        }}>
-                            {skillProgress.filter(p => p.status === 'completed').length}
-                        </span>
+                <div className="completed-skills-section">
+                    <div className="completed-skills-header">
+                        <span>🏆 Completed Skills</span>
+                        <span>{skillProgress.filter(p => p.status === 'completed').length}</span>
                     </div>
-
-                    <div style={{
-                        overflowX: 'auto',
-                        overflowY: 'hidden',
-                        padding: '12px',
-                        display: 'flex',
-                        gap: '12px',
-                        whiteSpace: 'nowrap',
-                        background: '#fafafa'
-                    }}>
+                    <div className="completed-skills-scroll">
                         {skillProgress.filter(p => p.status === 'completed').map(progress => {
                             const teacher = {
                                 id: progress.teacherId?._id || progress.teacherId,
@@ -580,72 +542,16 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                             );
 
                             return (
-                                <div
-                                    key={progress._id}
-                                    style={{
-                                        flex: '0 0 auto',
-                                        width: '280px',
-                                        background: 'white',
-                                        borderRadius: '12px',
-                                        padding: '14px',
-                                        border: '1px solid #e2e8f0',
-                                        boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: '10px'
-                                    }}
-                                >
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <div style={{
-                                            width: '40px',
-                                            height: '40px',
-                                            borderRadius: '10px',
-                                            background: 'linear-gradient(135deg, #48bb78, #38a169)',
-                                            color: 'white',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontWeight: 'bold',
-                                            fontSize: '1.1rem'
-                                        }}>
-                                            {progress.skill.charAt(0).toUpperCase()}
-                                        </div>
-                                        <div style={{ flex: 1, minWidth: 0 }}>
-                                            <div style={{ 
-                                                fontWeight: '700', 
-                                                fontSize: '0.95rem',
-                                                color: '#2d3748',
-                                                whiteSpace: 'nowrap',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis'
-                                            }}>
-                                                {progress.skill}
-                                            </div>
-                                            <div style={{ 
-                                                fontSize: '0.7rem', 
-                                                color: '#718096',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '4px'
-                                            }}>
-                                                <span>👤 {targetUser.name.split(' ')[0]}</span>
-                                                <span>•</span>
-                                                <span>🪙 {progress.totalSessions * 10}</span>
-                                            </div>
-                                        </div>
-                                        <span style={{
-                                            background: '#d4edda',
-                                            color: '#155724',
-                                            padding: '4px 8px',
-                                            borderRadius: '20px',
-                                            fontSize: '0.65rem',
-                                            fontWeight: '700',
-                                            whiteSpace: 'nowrap'
-                                        }}>
-                                            ✓ Done
-                                        </span>
+                                <div key={progress._id} className="completed-skill-card">
+                                    <div className="completed-skill-icon">
+                                        {progress.skill.charAt(0).toUpperCase()}
                                     </div>
-
+                                    <div className="completed-skill-info">
+                                        <div className="completed-skill-name">{progress.skill}</div>
+                                        <div className="completed-skill-user">
+                                            👤 {targetUser.name.split(' ')[0]} · 🪙 {progress.totalSessions * 10}
+                                        </div>
+                                    </div>
                                     <button
                                         onClick={async () => {
                                             if (completedSession) {
@@ -668,25 +574,9 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                                             });
                                         }}
                                         disabled={!completedSession}
-                                        style={{
-                                            width: '100%',
-                                            padding: '8px',
-                                            background: completedSession ? '#ffc107' : '#cbd5e0',
-                                            color: completedSession ? '#000' : '#fff',
-                                            border: 'none',
-                                            borderRadius: '8px',
-                                            fontSize: '0.8rem',
-                                            fontWeight: '600',
-                                            cursor: completedSession ? 'pointer' : 'not-allowed',
-                                            opacity: completedSession ? 1 : 0.5,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: '6px',
-                                            transition: 'all 0.2s'
-                                        }}
+                                        className="rate-button"
                                     >
-                                        <span>⭐</span> Rate {targetUser.name.split(' ')[0]}
+                                        ⭐ Rate
                                     </button>
                                 </div>
                             );

@@ -49,6 +49,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
 
     useEffect(() => {
         const lastMessage = messages[messages.length - 1];
+        // Id check ko handle kiya agar backend object ya string me se kuch bhi bheje
         const isOwnMessage = lastMessage?.senderId?._id === currentUser.id || lastMessage?.senderId === currentUser.id;
         if (isOwnMessage) {
             scrollToBottom();
@@ -255,7 +256,6 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
 
     return (
         <div className="chat-room">
-            {/* Top Header */}
             <div className="chat-header">
                 <button className="back-button" onClick={onBack}>←</button>
                 <div className="chat-user-info">
@@ -280,7 +280,6 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 <div className="verification-message">{verificationMessage}</div>
             )}
 
-            {/* Scheduled Sessions Container */}
             {sessions.filter(s => s.status === 'scheduled').length > 0 && (
                 <div className="upcoming-sessions">
                     <div className="sessions-header">
@@ -336,7 +335,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 </div>
             )}
 
-            {/* Middle Main Messages Container */}
+            {/* Messages Container */}
             <div className="messages-container" ref={messagesContainerRef}>
                 {loading ? (
                     <div className="loading-messages">Loading messages...</div>
@@ -351,6 +350,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                         <div key={date} className="message-group">
                             <div className="date-divider"><span>{date}</span></div>
                             {msgs.map((message, index) => {
+                                // Id types comparison fix kiya taaki UI structure break na ho
                                 const isOwn = message.senderId?._id === currentUser.id || message.senderId === currentUser.id;
                                 const showAvatar = index === 0 || (msgs[index - 1].senderId?._id !== message.senderId?._id && msgs[index - 1].senderId !== message.senderId);
                                 
@@ -379,97 +379,93 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Bottom Sticky Wrapper for Input Field and Skill Cards */}
-            <div className="chat-footer-wrapper">
-                {/* Input Area */}
-                <form className="message-input-form" onSubmit={sendMessage}>
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        placeholder="Type a message..."
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                    />
-                    <button type="submit" disabled={!newMessage.trim()}>
-                        Send
-                    </button>
-                </form>
+            {/* Message Input */}
+            <form className="message-input-form" onSubmit={sendMessage}>
+                <input
+                    ref={inputRef}
+                    type="text"
+                    placeholder="Type a message..."
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                />
+                <button type="submit" disabled={!newMessage.trim()}>
+                    Send
+                </button>
+            </form>
 
-                {/* Completed Skills Section */}
-                {skillProgress.filter(p => p.status === 'completed').length > 0 && (
-                    <div className="completed-skills-section">
-                        <div className="completed-skills-header">
-                            <span>🏆 Completed Skills</span>
-                            <span>{skillProgress.filter(p => p.status === 'completed').length}</span>
-                        </div>
-                        <div className="completed-skills-scroll">
-                            {skillProgress.filter(p => p.status === 'completed').map(progress => {
-                                const teacher = {
-                                    id: progress.teacherId?._id || progress.teacherId,
-                                    name: progress.teacherId?.name || 'Teacher',
-                                    email: progress.teacherId?.email || ''
-                                };
-                                const learner = {
-                                    id: progress.learnerId?._id || progress.learnerId,
-                                    name: progress.learnerId?.name || 'Learner',
-                                    email: progress.learnerId?.email || ''
-                                };
-                                const isCurrentUserTeacher = progress.teacherId?._id === currentUser.id || progress.teacherId === currentUser.id;
-                                const targetUser = isCurrentUserTeacher ? learner : teacher;
-                                const completedSession = sessions.find(s => 
-                                    s.skill === progress.skill && s.status === 'completed' &&
-                                    ((s.teacherId?._id === teacher.id && s.learnerId?._id === learner.id) ||
-                                     (s.teacherId?._id === learner.id && s.learnerId?._id === teacher.id))
-                                );
-
-                                return (
-                                    <div key={progress._id} className="completed-skill-card">
-                                        <div className="completed-skill-icon">{progress.skill.charAt(0).toUpperCase()}</div>
-                                        <div className="completed-skill-info">
-                                            <div className="completed-skill-name">{progress.skill}</div>
-                                            <div className="completed-skill-user">
-                                                👤 {targetUser.name.split(' ')[0]} · 🪙 {progress.totalSessions * 10}
-                                            </div>
-                                            {completedSession && completedSession.rating && (
-                                                <div className="completed-skill-rating">
-                                                    ⭐ Rated {completedSession.rating}/5
-                                                </div>
-                                            )}
-                                        </div>
-                                        <button
-                                            onClick={async () => {
-                                                if (completedSession) {
-                                                    const response = await fetch(
-                                                        `http://32.198.132.159:5000/api/users/${currentUser.id}/can-review/${targetUser.id}?sessionId=${completedSession._id}`
-                                                    );
-                                                    const data = await response.json();
-                                                    if (!data.canReview && data.reason === 'You have already reviewed this session') {
-                                                        alert('✅ You have already reviewed this session');
-                                                        return;
-                                                    }
-                                                }
-                                                setShowReviewPopup({
-                                                    targetUser,
-                                                    sessionId: completedSession?._id,
-                                                    swapRequestId: progress.swapRequestId,
-                                                    skill: progress.skill,
-                                                    credits: progress.totalSessions * 10
-                                                });
-                                            }}
-                                            disabled={!completedSession}
-                                            className="rate-button"
-                                        >
-                                            ⭐ Rate
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
+            {/* Completed Skills - Bottom Section */}
+            {skillProgress.filter(p => p.status === 'completed').length > 0 && (
+                <div className="completed-skills-section">
+                    <div className="completed-skills-header">
+                        <span>🏆 Completed Skills</span>
+                        <span>{skillProgress.filter(p => p.status === 'completed').length}</span>
                     </div>
-                )}
-            </div>
+                    <div className="completed-skills-scroll">
+                        {skillProgress.filter(p => p.status === 'completed').map(progress => {
+                            const teacher = {
+                                id: progress.teacherId?._id || progress.teacherId,
+                                name: progress.teacherId?.name || 'Teacher',
+                                email: progress.teacherId?.email || ''
+                            };
+                            const learner = {
+                                id: progress.learnerId?._id || progress.learnerId,
+                                name: progress.learnerId?.name || 'Learner',
+                                email: progress.learnerId?.email || ''
+                            };
+                            const isCurrentUserTeacher = progress.teacherId?._id === currentUser.id || progress.teacherId === currentUser.id;
+                            const targetUser = isCurrentUserTeacher ? learner : teacher;
+                            const completedSession = sessions.find(s => 
+                                s.skill === progress.skill && s.status === 'completed' &&
+                                ((s.teacherId?._id === teacher.id && s.learnerId?._id === learner.id) ||
+                                 (s.teacherId?._id === learner.id && s.learnerId?._id === teacher.id))
+                            );
 
-            {/* Popups */}
+                            return (
+                                <div key={progress._id} className="completed-skill-card">
+                                    <div className="completed-skill-icon">{progress.skill.charAt(0).toUpperCase()}</div>
+                                    <div className="completed-skill-info">
+                                        <div className="completed-skill-name">{progress.skill}</div>
+                                        <div className="completed-skill-user">
+                                            👤 {targetUser.name.split(' ')[0]} · 🪙 {progress.totalSessions * 10}
+                                        </div>
+                                        {completedSession && completedSession.rating && (
+                                            <div className="completed-skill-rating">
+                                                ⭐ Rated {completedSession.rating}/5
+                                            </div>
+                                        )}
+                                    </div>
+                                    <button
+                                        onClick={async () => {
+                                            if (completedSession) {
+                                                const response = await fetch(
+                                                    `http://32.198.132.159:5000/api/users/${currentUser.id}/can-review/${targetUser.id}?sessionId=${completedSession._id}`
+                                                );
+                                                const data = await response.json();
+                                                if (!data.canReview && data.reason === 'You have already reviewed this session') {
+                                                    alert('✅ You have already reviewed this session');
+                                                    return;
+                                                }
+                                            }
+                                            setShowReviewPopup({
+                                                targetUser,
+                                                sessionId: completedSession?._id,
+                                                swapRequestId: progress.swapRequestId,
+                                                skill: progress.skill,
+                                                credits: progress.totalSessions * 10
+                                            });
+                                        }}
+                                        disabled={!completedSession}
+                                        className="rate-button"
+                                    >
+                                        ⭐ Rate
+                                    </button>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
             {showSchedule && (
                 <ScheduleSession
                     chat={chat}

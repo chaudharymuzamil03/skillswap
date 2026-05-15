@@ -1,5 +1,4 @@
-const API_BASE_URL = 'http://204.236.211.198:5000/api';
-
+const API_BASE_URL = 'http://32.198.132.159:5000/api';
 export const authAPI = {
     register: async (userData) => {
         try {

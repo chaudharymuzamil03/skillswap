@@ -7,10 +7,15 @@ const Profile = ({ user, onUpdate }) => {
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState('')
     const [error, setError] = useState({ teach: '', learn: '' })
+    const [isMobile, setIsMobile] = useState(false)
 
-    // ============================================
-    // Load skills from MongoDB on mount
-    // ============================================
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     useEffect(() => {
         fetchUserSkills();
     }, [user.id]);
@@ -29,7 +34,6 @@ const Profile = ({ user, onUpdate }) => {
                 setTeachSkills(data.user.teachSkills || []);
                 setLearnSkills(data.user.learnSkills || []);
                 
-                // Update localStorage
                 const savedUser = localStorage.getItem('skillswap_user');
                 if (savedUser) {
                     const userData = JSON.parse(savedUser);
@@ -43,25 +47,13 @@ const Profile = ({ user, onUpdate }) => {
         }
     };
 
-    // ============================================
-    // Validate Skill - NO NUMBERS ALLOWED
-    // ============================================
     const validateSkill = (skill) => {
-        if (!skill.trim()) {
-            return 'Skill cannot be empty';
-        }
-        if (/\d/.test(skill)) {
-            return '❌ Skill cannot contain numbers';
-        }
-        if (skill.trim().length < 2) {
-            return 'Skill must be at least 2 characters';
-        }
+        if (!skill.trim()) return 'Skill cannot be empty';
+        if (/\d/.test(skill)) return '❌ Skill cannot contain numbers';
+        if (skill.trim().length < 2) return 'Skill must be at least 2 characters';
         return '';
     };
 
-    // ============================================
-    // Add Skill with Validation
-    // ============================================
     const addSkill = (e) => {
         e?.preventDefault();
         
@@ -76,7 +68,6 @@ const Profile = ({ user, onUpdate }) => {
             return;
         }
 
-        // Check for duplicates
         if (newSkill.type === 'teach') {
             if (teachSkills.includes(newSkill.name.trim())) {
                 setError({ ...error, teach: '❌ Skill already added' });
@@ -96,9 +87,6 @@ const Profile = ({ user, onUpdate }) => {
         setNewSkill({ type: 'teach', name: '' });
     };
 
-    // ============================================
-    // Remove Skill
-    // ============================================
     const removeSkill = (type, index) => {
         if (type === 'teach') {
             setTeachSkills(teachSkills.filter((_, i) => i !== index));
@@ -107,9 +95,6 @@ const Profile = ({ user, onUpdate }) => {
         }
     };
 
-    // ============================================
-    // Save Skills to MongoDB - NO PAGE REFRESH
-    // ============================================
     const saveSkills = async (e) => {
         e?.preventDefault();
         
@@ -138,7 +123,6 @@ const Profile = ({ user, onUpdate }) => {
             console.log('📦 MongoDB Response:', data);
             
             if (data.success) {
-                // Update localStorage
                 const savedUser = localStorage.getItem('skillswap_user');
                 if (savedUser) {
                     const userData = JSON.parse(savedUser);
@@ -149,12 +133,10 @@ const Profile = ({ user, onUpdate }) => {
 
                 setMessage('✅ Skills saved successfully!');
                 
-                // Call onUpdate if provided
                 if (onUpdate) {
                     onUpdate(data.user);
                 }
 
-                // Clear message after 3 seconds
                 setTimeout(() => {
                     setMessage('');
                 }, 3000);
@@ -169,7 +151,6 @@ const Profile = ({ user, onUpdate }) => {
         }
     };
 
-    // Handle Enter key press
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -179,27 +160,27 @@ const Profile = ({ user, onUpdate }) => {
 
     return (
         <div>
-            <h2 style={{ marginBottom: '20px', color: '#333' }}>Manage Your Profile</h2>
+            <h2 style={{ marginBottom: isMobile ? '15px' : '20px', color: '#333', fontSize: isMobile ? '1.3rem' : '1.5rem' }}>Manage Your Profile</h2>
             
-            {/* Success/Error Message */}
             {message && (
                 <div style={{
                     background: message.includes('✅') ? '#d4edda' : '#f8d7da',
                     color: message.includes('✅') ? '#155724' : '#721c24',
-                    padding: '12px',
+                    padding: isMobile ? '10px' : '12px',
                     borderRadius: '8px',
-                    marginBottom: '20px',
+                    marginBottom: '15px',
                     border: `1px solid ${message.includes('✅') ? '#c3e6cb' : '#f5c6cb'}`,
-                    fontSize: '14px'
+                    fontSize: isMobile ? '12px' : '14px',
+                    textAlign: 'center'
                 }}>
                     {message}
                 </div>
             )}
             
-            <div className="stat-card" style={{ marginBottom: '30px' }}>
-                <h3>Quick Stats</h3>
-                <p>Complete your profile to get better matches!</p>
-                <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
+            <div className="stat-card" style={{ marginBottom: isMobile ? '15px' : '30px', padding: isMobile ? '15px' : '20px' }}>
+                <h3 style={{ fontSize: isMobile ? '1rem' : '1.2rem' }}>Quick Stats</h3>
+                <p style={{ fontSize: isMobile ? '12px' : '14px' }}>Complete your profile to get better matches!</p>
+                <div style={{ display: 'flex', gap: isMobile ? '15px' : '20px', marginTop: '10px', flexWrap: 'wrap' }}>
                     <div>
                         <strong>To Teach:</strong> {teachSkills.length} skills
                     </div>
@@ -209,15 +190,23 @@ const Profile = ({ user, onUpdate }) => {
                 </div>
             </div>
 
-            {/* Add New Skill */}
-            <div className="module-card" style={{ marginBottom: '20px' }}>
-                <h3>Add New Skill</h3>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexDirection: 'column' }}>
-                    <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+            {/* Add New Skill - Mobile Responsive */}
+            <div className="module-card" style={{ marginBottom: isMobile ? '15px' : '20px', padding: isMobile ? '15px' : '20px' }}>
+                <h3 style={{ fontSize: isMobile ? '1rem' : '1.2rem' }}>Add New Skill</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ 
+                        display: 'flex', 
+                        flexDirection: isMobile ? 'column' : 'row',
+                        gap: '10px', 
+                        width: '100%' 
+                    }}>
                         <select 
                             value={newSkill.type}
                             onChange={(e) => setNewSkill({...newSkill, type: e.target.value})}
-                            style={{ width: 'auto' }}
+                            style={{ 
+                                width: isMobile ? '100%' : 'auto',
+                                padding: isMobile ? '10px' : '12px'
+                            }}
                         >
                             <option value="teach">I Can Teach</option>
                             <option value="learn">I Want to Learn</option>
@@ -228,7 +217,6 @@ const Profile = ({ user, onUpdate }) => {
                             value={newSkill.name}
                             onChange={(e) => {
                                 setNewSkill({...newSkill, name: e.target.value});
-                                // Clear error when typing
                                 if (newSkill.type === 'teach') {
                                     setError({...error, teach: ''});
                                 } else {
@@ -236,24 +224,30 @@ const Profile = ({ user, onUpdate }) => {
                                 }
                             }}
                             onKeyPress={handleKeyPress}
-                            style={{ flex: 1 }}
+                            style={{ 
+                                flex: 1,
+                                padding: isMobile ? '10px' : '12px',
+                                width: isMobile ? '100%' : 'auto'
+                            }}
                         />
                         <button 
                             className="btn" 
                             onClick={addSkill}
-                            style={{ width: 'auto' }}
+                            style={{ 
+                                width: isMobile ? '100%' : 'auto',
+                                padding: isMobile ? '10px' : '12px'
+                            }}
                         >
                             Add Skill
                         </button>
                     </div>
                     
-                    {/* Validation Error Message */}
                     {newSkill.type === 'teach' && error.teach && (
                         <div style={{
                             color: '#dc3545',
-                            fontSize: '13px',
+                            fontSize: '12px',
                             marginTop: '5px',
-                            padding: '5px 10px',
+                            padding: '8px',
                             background: '#f8d7da',
                             borderRadius: '4px',
                             width: '100%'
@@ -264,9 +258,9 @@ const Profile = ({ user, onUpdate }) => {
                     {newSkill.type === 'learn' && error.learn && (
                         <div style={{
                             color: '#dc3545',
-                            fontSize: '13px',
+                            fontSize: '12px',
                             marginTop: '5px',
-                            padding: '5px 10px',
+                            padding: '8px',
                             background: '#f8d7da',
                             borderRadius: '4px',
                             width: '100%'
@@ -275,24 +269,33 @@ const Profile = ({ user, onUpdate }) => {
                         </div>
                     )}
                 </div>
-                <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+                <p style={{ fontSize: '11px', color: '#666', marginTop: '10px' }}>
                     ⚠️ Numbers are not allowed in skill names
                 </p>
             </div>
 
             {/* Skills to Teach */}
-            <div className="module-card" style={{ marginBottom: '20px' }}>
-                <h3 style={{ color: '#28a745' }}>Skills I Can Teach</h3>
-                <div className="skill-tags">
+            <div className="module-card" style={{ marginBottom: isMobile ? '15px' : '20px', padding: isMobile ? '15px' : '20px' }}>
+                <h3 style={{ color: '#28a745', fontSize: isMobile ? '1rem' : '1.2rem' }}>Skills I Can Teach</h3>
+                <div className="skill-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
                     {teachSkills.map((skill, index) => (
-                        <div key={index} className="skill-tag teach">
+                        <div key={index} className="skill-tag teach" style={{
+                            background: '#d4edda',
+                            color: '#155724',
+                            padding: isMobile ? '6px 12px' : '5px 12px',
+                            borderRadius: '20px',
+                            fontSize: isMobile ? '12px' : '13px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}>
                             {skill}
                             <span 
                                 style={{ 
-                                    marginLeft: '8px', 
                                     cursor: 'pointer',
                                     fontWeight: 'bold',
-                                    fontSize: '18px'
+                                    fontSize: isMobile ? '16px' : '18px',
+                                    color: '#721c24'
                                 }}
                                 onClick={() => removeSkill('teach', index)}
                             >
@@ -301,7 +304,7 @@ const Profile = ({ user, onUpdate }) => {
                         </div>
                     ))}
                     {teachSkills.length === 0 && (
-                        <p style={{ color: '#666', fontStyle: 'italic' }}>
+                        <p style={{ color: '#666', fontStyle: 'italic', fontSize: isMobile ? '12px' : '14px' }}>
                             No skills added yet. Add skills you can teach to start swapping!
                         </p>
                     )}
@@ -309,18 +312,26 @@ const Profile = ({ user, onUpdate }) => {
             </div>
 
             {/* Skills to Learn */}
-            <div className="module-card" style={{ marginBottom: '20px' }}>
-                <h3 style={{ color: '#dc3545' }}>Skills I Want to Learn</h3>
-                <div className="skill-tags">
+            <div className="module-card" style={{ marginBottom: isMobile ? '15px' : '20px', padding: isMobile ? '15px' : '20px' }}>
+                <h3 style={{ color: '#dc3545', fontSize: isMobile ? '1rem' : '1.2rem' }}>Skills I Want to Learn</h3>
+                <div className="skill-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
                     {learnSkills.map((skill, index) => (
-                        <div key={index} className="skill-tag learn">
+                        <div key={index} className="skill-tag learn" style={{
+                            background: '#f8d7da',
+                            color: '#721c24',
+                            padding: isMobile ? '6px 12px' : '5px 12px',
+                            borderRadius: '20px',
+                            fontSize: isMobile ? '12px' : '13px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}>
                             {skill}
                             <span 
                                 style={{ 
-                                    marginLeft: '8px', 
                                     cursor: 'pointer',
                                     fontWeight: 'bold',
-                                    fontSize: '18px'
+                                    fontSize: isMobile ? '16px' : '18px'
                                 }}
                                 onClick={() => removeSkill('learn', index)}
                             >
@@ -329,7 +340,7 @@ const Profile = ({ user, onUpdate }) => {
                         </div>
                     ))}
                     {learnSkills.length === 0 && (
-                        <p style={{ color: '#666', fontStyle: 'italic' }}>
+                        <p style={{ color: '#666', fontStyle: 'italic', fontSize: isMobile ? '12px' : '14px' }}>
                             Add skills you want to learn to find perfect partners!
                         </p>
                     )}
@@ -337,7 +348,7 @@ const Profile = ({ user, onUpdate }) => {
             </div>
 
             {/* Save Button */}
-            <div className="module-card">
+            <div className="module-card" style={{ padding: isMobile ? '15px' : '20px' }}>
                 <button 
                     className="btn" 
                     onClick={saveSkills}
@@ -345,12 +356,14 @@ const Profile = ({ user, onUpdate }) => {
                     style={{ 
                         background: loading ? '#6c757d' : '#28a745',
                         cursor: loading ? 'not-allowed' : 'pointer',
-                        width: '100%'
+                        width: '100%',
+                        padding: isMobile ? '12px' : '15px',
+                        fontSize: isMobile ? '14px' : '16px'
                     }}
                 >
                     {loading ? 'Saving...' : '💾 Save Skills to Database'}
                 </button>
-                <p style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
+                <p style={{ marginTop: '10px', fontSize: isMobile ? '11px' : '14px', color: '#666', textAlign: 'center' }}>
                     Your skills will appear in Skill Matching after saving.
                 </p>
             </div>

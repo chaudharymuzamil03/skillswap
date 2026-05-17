@@ -265,7 +265,7 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
     return (
         <div className="chat-room">
             <div className="chat-header">
-                <button className="back-button" onClick={handleBack}>← Back</button>
+                <button className="back-button" onClick={handleBack}>←</button>
                 <div className="chat-user-info">
                     <div className="chat-avatar large">
                         {otherUser?.name?.split(' ').map(n => n[0]).join('') || '?'}

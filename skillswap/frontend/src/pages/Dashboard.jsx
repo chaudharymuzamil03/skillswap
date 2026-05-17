@@ -17,8 +17,8 @@ const Dashboard = ({ user, onLogout }) => {
     useEffect(() => {
         const checkScreenSize = () => {
             const width = window.innerWidth;
-            setIsMobile(width <= 480);
-            setIsTablet(width > 480 && width <= 768);
+            setIsMobile(width <= 768);  // Mobile only
+            setIsTablet(width > 768 && width <= 1024);
         };
         checkScreenSize();
         window.addEventListener('resize', checkScreenSize);
@@ -28,7 +28,7 @@ const Dashboard = ({ user, onLogout }) => {
     // Determine number of columns based on screen size
     const getGridColumns = () => {
         if (isMobile) return 'repeat(2, 1fr)';  // 2 columns on mobile
-        if (isTablet) return 'repeat(2, 1fr)'; // 2 columns on tablet
+        if (isTablet) return 'repeat(3, 1fr)';  // 3 columns on tablet
         return 'repeat(3, 1fr)';               // 3 columns on desktop
     };
 
@@ -105,7 +105,7 @@ const Dashboard = ({ user, onLogout }) => {
                 return <ReviewList currentUser={user} />;
             default:
                 return (
-                    <div style={{
+                    <div className="modules-scroll-container" style={{
                         display: 'grid',
                         gridTemplateColumns: getGridColumns(),
                         gap: isMobile ? '12px' : '20px',
@@ -166,138 +166,294 @@ const Dashboard = ({ user, onLogout }) => {
     ];
 
     return (
-        <div style={{ padding: isMobile ? '8px' : '20px', maxWidth: '1200px', margin: '0 auto' }}>
-            {/* Header */}
-            <div style={{ 
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                padding: isMobile ? '12px 15px' : '20px 30px',
-                display: 'flex',
-                flexDirection: isMobile ? 'column' : 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                color: 'white',
-                borderRadius: '12px',
-                marginBottom: isMobile ? '12px' : '20px',
-                gap: isMobile ? '10px' : '0'
-            }}>
-                <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '12px',
-                    flexDirection: isMobile ? 'column' : 'row',
-                    textAlign: isMobile ? 'center' : 'left'
-                }}>
+        <div style={{ 
+            padding: isMobile ? '0' : '20px', 
+            maxWidth: '1200px', 
+            margin: '0 auto',
+            minHeight: '100vh',
+            background: '#f0f2f5'
+        }}>
+            {/* Mobile: Sticky Header - Fixed on scroll */}
+            {isMobile ? (
+                // MOBILE VERSION - Sticky Header
+                <>
+                    {/* Fixed Header (Sticky on scroll) */}
                     <div style={{
-                        width: isMobile ? '45px' : '50px',
-                        height: isMobile ? '45px' : '50px',
-                        borderRadius: '50%',
-                        background: 'rgba(255,255,255,0.2)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: isMobile ? '1.2rem' : '1.2rem',
-                        fontWeight: 'bold'
+                        position: 'sticky',
+                        top: 0,
+                        zIndex: 100,
+                        background: '#f0f2f5',
+                        padding: '12px 12px 0 12px'
                     }}>
-                        {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                    </div>
-                    <div>
-                        <h2 style={{ margin: 0, fontSize: isMobile ? '1rem' : '1.4rem' }}>
-                            Welcome, {user.name || 'User'}
-                        </h2>
-                        <p style={{ margin: 0, opacity: 0.9, fontSize: isMobile ? '0.7rem' : '0.9rem' }}>
-                            {user.email}
-                        </p>
-                    </div>
-                </div>
-                
-                <div style={{ 
-                    display: 'flex', 
-                    gap: '8px',
-                    flexDirection: isMobile ? 'row' : 'row',
-                    width: isMobile ? '100%' : 'auto'
-                }}>
-                    <button 
-                        style={{ 
-                            background: 'linear-gradient(45deg, #ff6b6b, #ee5a24)',
-                            color: 'white',
-                            border: 'none',
-                            padding: isMobile ? '8px 12px' : '10px 20px',
-                            borderRadius: '8px',
-                            fontWeight: '600',
-                            fontSize: isMobile ? '0.7rem' : '0.9rem',
-                            cursor: 'pointer',
-                            flex: isMobile ? 1 : 'none'
-                        }}
-                        onClick={() => setActiveModule('requests')}
-                    >
-                        📩 Swap Requests
-                    </button>
-                    
-                    <button 
-                        style={{ 
-                            background: 'rgba(255,255,255,0.15)',
-                            color: 'white',
-                            border: '1px solid rgba(255,255,255,0.3)',
-                            padding: isMobile ? '8px 12px' : '10px 20px',
-                            borderRadius: '8px',
-                            fontWeight: '600',
-                            fontSize: isMobile ? '0.7rem' : '0.9rem',
-                            cursor: 'pointer',
-                            flex: isMobile ? 1 : 'none'
-                        }}
-                        onClick={onLogout}
-                    >
-                        🚪 Logout
-                    </button>
-                </div>
-            </div>
+                        {/* Header Banner */}
+                        <div style={{ 
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            padding: '12px 15px',
+                            borderRadius: '12px',
+                            marginBottom: '12px'
+                        }}>
+                            <div style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '12px'
+                            }}>
+                                <div style={{
+                                    width: '45px',
+                                    height: '45px',
+                                    borderRadius: '50%',
+                                    background: 'rgba(255,255,255,0.2)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '1.2rem',
+                                    fontWeight: 'bold',
+                                    color: 'white'
+                                }}>
+                                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                                </div>
+                                <div>
+                                    <h2 style={{ margin: 0, fontSize: '14px', color: 'white' }}>
+                                        Welcome, {user.name || 'User'}
+                                    </h2>
+                                    <p style={{ margin: 0, opacity: 0.8, fontSize: '11px', color: 'white' }}>
+                                        {user.email}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
 
-            {/* Stats - 2x2 grid on mobile */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
-                gap: isMobile ? '8px' : '15px',
-                margin: isMobile ? '10px 0' : '20px 0'
-            }}>
-                {stats.map((stat, index) => (
-                    <div key={index} style={{
-                        background: 'white',
-                        padding: isMobile ? '10px' : '20px',
-                        borderRadius: '10px',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-                        textAlign: 'center'
-                    }}>
-                        <div style={{ fontSize: isMobile ? '20px' : '32px' }}>{stat.icon}</div>
+                        {/* Stats Grid */}
                         <div style={{
-                            fontSize: isMobile ? '1.3em' : '2em',
-                            fontWeight: 'bold',
-                            color: stat.color
-                        }}>{stat.value}</div>
-                        <div style={{ fontSize: isMobile ? '10px' : '14px', color: '#666' }}>{stat.label}</div>
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(4, 1fr)',
+                            gap: '8px',
+                            marginBottom: '12px'
+                        }}>
+                            {stats.map((stat, index) => (
+                                <div key={index} style={{
+                                    background: 'white',
+                                    padding: '8px',
+                                    borderRadius: '10px',
+                                    textAlign: 'center',
+                                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                                }}>
+                                    <div style={{ fontSize: '16px' }}>{stat.icon}</div>
+                                    <div style={{
+                                        fontSize: '14px',
+                                        fontWeight: 'bold',
+                                        color: stat.color
+                                    }}>{stat.value}</div>
+                                    <div style={{ fontSize: '9px', color: '#666' }}>{stat.label}</div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div style={{ 
+                            display: 'flex', 
+                            gap: '8px',
+                            marginBottom: '12px'
+                        }}>
+                            <button 
+                                style={{ 
+                                    flex: 1,
+                                    background: 'linear-gradient(45deg, #ff6b6b, #ee5a24)',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '10px',
+                                    borderRadius: '8px',
+                                    fontWeight: '600',
+                                    fontSize: '12px',
+                                    cursor: 'pointer'
+                                }}
+                                onClick={() => setActiveModule('requests')}
+                            >
+                                📩 Swap Requests
+                            </button>
+                            <button 
+                                style={{ 
+                                    flex: 1,
+                                    background: 'rgba(0,0,0,0.6)',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '10px',
+                                    borderRadius: '8px',
+                                    fontWeight: '600',
+                                    fontSize: '12px',
+                                    cursor: 'pointer'
+                                }}
+                                onClick={onLogout}
+                            >
+                                🚪 Logout
+                            </button>
+                        </div>
                     </div>
-                ))}
-            </div>
 
-            {activeModule !== 'overview' && (
-                <button 
-                    onClick={() => setActiveModule('overview')}
-                    style={{ 
-                        marginBottom: '15px', 
-                        padding: isMobile ? '8px 16px' : '10px 20px',
-                        background: '#6c757d',
+                    {/* Scrollable Modules Section */}
+                    <div style={{
+                        padding: '0 12px 12px 12px',
+                        maxHeight: 'calc(100vh - 280px)',
+                        overflowY: 'auto'
+                    }}>
+                        {activeModule !== 'overview' ? (
+                            <>
+                                <button 
+                                    onClick={() => setActiveModule('overview')}
+                                    style={{ 
+                                        width: '100%',
+                                        padding: '10px',
+                                        background: '#6c757d',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontSize: '13px',
+                                        cursor: 'pointer',
+                                        marginBottom: '12px'
+                                    }}
+                                >
+                                    ← Back to Overview
+                                </button>
+                                {renderModule()}
+                            </>
+                        ) : (
+                            <div className="modules-scroll-container" style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(2, 1fr)',
+                                gap: '12px'
+                            }}>
+                                {modules.map(module => (
+                                    <div 
+                                        key={module.id}
+                                        onClick={() => setActiveModule(module.id)}
+                                        style={{
+                                            background: 'white',
+                                            padding: '14px',
+                                            borderRadius: '12px',
+                                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                                            cursor: 'pointer',
+                                            textAlign: 'center',
+                                            borderLeft: `3px solid ${module.color}`
+                                        }}
+                                    >
+                                        <div style={{ fontSize: '24px', marginBottom: '5px' }}>{module.icon}</div>
+                                        <h3 style={{ fontSize: '12px', margin: '0', color: module.color, fontWeight: '600' }}>{module.title}</h3>
+                                        <div style={{ fontSize: '10px', color: module.color, marginTop: '5px' }}>Click →</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </>
+            ) : (
+                // DESKTOP VERSION - NO CHANGES (Original)
+                <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+                    {/* Header */}
+                    <div style={{ 
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        padding: '20px 30px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                         color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontSize: isMobile ? '12px' : '14px',
-                        width: isMobile ? '100%' : 'auto'
-                    }}
-                >
-                    ← Back to Overview
-                </button>
-            )}
+                        borderRadius: '12px',
+                        marginBottom: '20px'
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                            <div style={{
+                                width: '50px',
+                                height: '50px',
+                                borderRadius: '50%',
+                                background: 'rgba(255,255,255,0.2)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '1.2rem',
+                                fontWeight: 'bold'
+                            }}>
+                                {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                            </div>
+                            <div>
+                                <h2 style={{ margin: 0, fontSize: '1.4rem' }}>Welcome, {user.name || 'User'}</h2>
+                                <p style={{ margin: 0, opacity: 0.9, fontSize: '0.9rem' }}>{user.email}</p>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <button 
+                                style={{ 
+                                    background: 'linear-gradient(45deg, #ff6b6b, #ee5a24)',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '10px 20px',
+                                    borderRadius: '8px',
+                                    fontWeight: '600',
+                                    fontSize: '0.9rem',
+                                    cursor: 'pointer'
+                                }}
+                                onClick={() => setActiveModule('requests')}
+                            >
+                                📩 Swap Requests
+                            </button>
+                            <button 
+                                style={{ 
+                                    background: 'rgba(255,255,255,0.15)',
+                                    color: 'white',
+                                    border: '1px solid rgba(255,255,255,0.3)',
+                                    padding: '10px 20px',
+                                    borderRadius: '8px',
+                                    fontWeight: '600',
+                                    fontSize: '0.9rem',
+                                    cursor: 'pointer'
+                                }}
+                                onClick={onLogout}
+                            >
+                                🚪 Logout
+                            </button>
+                        </div>
+                    </div>
 
-            {renderModule()}
+                    {/* Stats - 4 in one row */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, 1fr)',
+                        gap: '15px',
+                        marginBottom: '25px'
+                    }}>
+                        {stats.map((stat, index) => (
+                            <div key={index} style={{
+                                background: 'white',
+                                padding: '20px',
+                                borderRadius: '10px',
+                                textAlign: 'center',
+                                boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                            }}>
+                                <div style={{ fontSize: '32px' }}>{stat.icon}</div>
+                                <div style={{ fontSize: '28px', fontWeight: 'bold', color: stat.color }}>{stat.value}</div>
+                                <div style={{ fontSize: '14px', color: '#666' }}>{stat.label}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {activeModule !== 'overview' && (
+                        <button 
+                            onClick={() => setActiveModule('overview')}
+                            style={{ 
+                                marginBottom: '20px', 
+                                padding: '10px 20px',
+                                background: '#6c757d',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                            }}
+                        >
+                            ← Back to Overview
+                        </button>
+                    )}
+
+                    {renderModule()}
+                </div>
+            )}
         </div>
     );
 };

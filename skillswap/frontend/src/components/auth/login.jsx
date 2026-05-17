@@ -298,7 +298,7 @@ const Login = ({ onLogin }) => {
                         fontSize: 'clamp(16px, 5vw, 20px)',
                         fontWeight: '600'
                     }}>
-                        {isLogin ? 'Welcome Back! 👋' : 'Start Your Journey 🚀'}
+                        {isLogin ? 'Welcome Back! ' : 'Start Your Journey '}
                     </h2>
                     
                     {/* Name Field (Register only) */}

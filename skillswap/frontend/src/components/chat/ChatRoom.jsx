@@ -49,7 +49,6 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
 
     useEffect(() => {
         const lastMessage = messages[messages.length - 1];
-        // Id check ko handle kiya agar backend object ya string me se kuch bhi bheje
         const isOwnMessage = lastMessage?.senderId?._id === currentUser.id || lastMessage?.senderId === currentUser.id;
         if (isOwnMessage) {
             scrollToBottom();
@@ -254,10 +253,19 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
         return skillProgress.find(p => p.skill === skillName && p.status === 'in-progress');
     };
 
+    // Handle back button click
+    const handleBack = () => {
+        if (onBack) {
+            onBack();
+        } else {
+            window.history.back();
+        }
+    };
+
     return (
         <div className="chat-room">
             <div className="chat-header">
-                <button className="back-button" onClick={onBack}>←</button>
+                <button className="back-button" onClick={handleBack}>← Back</button>
                 <div className="chat-user-info">
                     <div className="chat-avatar large">
                         {otherUser?.name?.split(' ').map(n => n[0]).join('') || '?'}
@@ -350,7 +358,6 @@ const ChatRoom = ({ chat, currentUser, onBack }) => {
                         <div key={date} className="message-group">
                             <div className="date-divider"><span>{date}</span></div>
                             {msgs.map((message, index) => {
-                                // Id types comparison fix kiya taaki UI structure break na ho
                                 const isOwn = message.senderId?._id === currentUser.id || message.senderId === currentUser.id;
                                 const showAvatar = index === 0 || (msgs[index - 1].senderId?._id !== message.senderId?._id && msgs[index - 1].senderId !== message.senderId);
                                 
